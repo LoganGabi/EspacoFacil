@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -75,11 +75,17 @@ WSGI_APPLICATION = 'espacofacil_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),  # Nome do banco de dados
+        'USER': config('DB_USER'),  # Usuário do banco de dados
+        'PASSWORD': config('DB_PASSWORD'),  # Senha do usuário
+        'HOST': config('DB_HOST', default='localhost'),  # Endereço do servidor MySQL
+        'PORT': config('DB_PORT', default='3306'),  # Porta do MySQL
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # Evita problemas com caracteres especiais
+        },
     }
 }
 
