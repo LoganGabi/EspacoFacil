@@ -14,7 +14,7 @@ class teste(viewsets.ModelViewSet):
 
 
     #  NA URLS.PY OS METODOS SAO CRIADOS AUTOMATICAMENTE, MAS SE FOR NECESSARIO FAZER UM CRUD MAIS COMPLEXO,
-    # PODE-SE SUBSCREVER O METODO
+    # PODE-SE SOBRECREVER O METODO
 
     def create(self, request, *args, **kwargs):
         data = request.data  # Pega os dados enviados no POST
