@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> Excluir Sala<h1>
+
+    <h3>Excluir Sala?<h3>
+    <p>Tem certeza que deseja excluir essa sala <strong> {{room.nameRoom}} </strong> ?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href={% url "room_list" %} class="btn btn-secondary">cancelar</a>
+    </form>
+{% endblock content %}
+
+
+
+    

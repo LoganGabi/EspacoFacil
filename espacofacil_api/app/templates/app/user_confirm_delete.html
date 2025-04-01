@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> Excluir Usuario<h1>
+
+    <h3>Excluir tarefa?<h3>
+    <p>Tem certeza que deseja excluir esse usuario <strong> {{user.name}} </strong> ?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href={% url "user_list" %} class="btn btn-secondary">cancelar</a>
+    </form>
+{% endblock content %}
+
+
+    

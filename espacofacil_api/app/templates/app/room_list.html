@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Nome da sala</th>
+      <th scope="col">capacidade</th>
+      <th scope="col">Responsavel</th>
+      <th scope="col">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for room in room_list %}
+      <tr>
+          <th scope="row">{{room.pk}}</th>
+          <td>{{room.nameRoom}}</td>
+          <td>{{room.headCount}}</td>
+          <td>{{room.roomManager.name}}</td>
+          <td>
+              <a href={% url "room_update" pk=room.pk %} class="btn btn-primary">Editar</a>
+              <a href={% url "room_delete" pk=room.pk %} class="btn btn-danger">Excluir</a>
+          </td>
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>
+<a href={% url "room_create" %} class="btn btn-primary">Cadastrar</a>
+{% endblock content %}
+

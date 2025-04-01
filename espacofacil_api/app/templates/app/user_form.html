@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+{% if user.pk %}
+    <h2>Editar Usuario<h2>
+{% else %}
+    <h2>Novo Usuario<h2>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+{% endblock content %}
+
+
