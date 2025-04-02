@@ -3,12 +3,12 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django import forms
 
 from django.urls import reverse_lazy
-from .models import Room, User
+from app.models import Room, User, Equipment
 
 
 def home(request):
     return render(request, "app/home.html")
-
+ 
 
 #Views da sala (room)
 
@@ -48,4 +48,22 @@ class UserUpdateView(UpdateView):
 class UserDeleteView(DeleteView):
     model = User
     success_url = reverse_lazy("user_list")
-# Create your views here.
+
+#views do equipamento
+
+class EquipmentListView(ListView):
+    model = Equipment
+
+class EquipmentCreateView(CreateView):
+    model = Equipment
+    fields = ["nameEquipment"]
+    success_url = reverse_lazy("equipment_list")
+
+class EquipmentUpdateView(UpdateView):
+    model = Equipment
+    fields = ["nameEquipment"]
+    success_url = reverse_lazy("equipment_list")
+
+class EquipmentDeleteView(DeleteView):
+    model = Equipment
+    success_url = reverse_lazy("equipment_list")

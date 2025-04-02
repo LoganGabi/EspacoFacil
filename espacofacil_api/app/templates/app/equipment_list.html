@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">Nome do equipamento</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for equipment in equipment_list %}
+        <tr>
+            <th scope="row">{{equipment.pk}}</th>
+            <td>{{equipment.nameEquipment}}</td>
+            <td>
+                <a href={% url "equipment_update" pk=equipment.pk %} class="btn btn-primary">Editar</a>
+                <a href={% url "equipment_delete" pk=equipment.pk %} class="btn btn-danger">Excluir</a>
+            </td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  <a href={% url "equipment_create" %} class="btn btn-primary">Cadastrar</a>
+{% endblock content %}

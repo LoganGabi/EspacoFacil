@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+{% if equipment.pk %}
+    <h2>Editar Equipamento<h2>
+{% else %}
+    <h2>Novo Equipamento<h2>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+{% endblock content %}
+
