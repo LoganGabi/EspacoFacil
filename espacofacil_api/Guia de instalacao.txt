@@ -1,0 +1,16 @@
+🚀 configuração do ambiente...
+
+-- Criar ambiente virtual
+python -m venv venv
+
+-- Ativar ambiente virtual
+call venv\Scripts\activate
+
+-- Instalar dependências
+pip install -r requirements.txt
+
+-- Criar o banco de dados
+python manage.py makemigrations
+
+-- Aplicar migrações
+python manage.py migrate

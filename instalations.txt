@@ -1,4 +1,0 @@
-espacofacil_api
--- pip install django==5.1.7
--- pip install mysqlclient (para se conectar ao MySQL)
--- pip install python-decouple (ler as variáveis de ambiente - env)
