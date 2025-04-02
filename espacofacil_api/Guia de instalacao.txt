@@ -1,10 +1,17 @@
 🚀 configuração do ambiente...
 
+-- Criar arquivo .env dentro da pasta espacofacil_api/espacofacil_api do backend com este modelo
+DB_NAME=espacofacil
+DB_USER=usuario //alterar
+DB_PASSWORD=senha //alterar
+DB_HOST=localhost
+DB_PORT=3306
+
 -- Criar ambiente virtual
 python -m venv venv
 
 -- Ativar ambiente virtual
-call venv\Scripts\activate
+venv\Scripts\activate
 
 -- Instalar dependências
 pip install -r requirements.txt
@@ -14,3 +21,6 @@ python manage.py makemigrations
 
 -- Aplicar migrações
 python manage.py migrate
+
+-- Execultar sistema
+python manage.py runserver
