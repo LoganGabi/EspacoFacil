@@ -1,9 +1,10 @@
-from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django import forms
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import (ListView, CreateView, 
+                                  UpdateView, DeleteView,
+                                  DetailView, View)
+from .forms import RoomEquipmentFormSet, RoomForm
 from django.urls import reverse_lazy
-from app.models import Room, User, Equipment
+from app.models import Room, User, Equipment, RoomEquipment
 
 
 def home(request):
@@ -16,20 +17,58 @@ class RoomListView(ListView):
     model = Room
 
 
-class RoomCreateView(CreateView):
-    model = Room
-    fields = ["nameRoom", "headCount", "roomManager"]
-    success_url = reverse_lazy("room_list")
+def room_create(request):
+    if request.method == "POST":
+        form = RoomForm(request.POST)
+        formset = RoomEquipmentFormSet(request.POST)
 
-class RoomUpdateView(UpdateView):
-    model = Room
-    fields = ["nameRoom","headCount","roomManager"]
-    success_url = reverse_lazy("room_list")
+        if form.is_valid() and formset.is_valid():
+            room = form.save()
+            room_equipments = formset.save(commit=False)
+
+            for equip in room_equipments:
+                equip.room = room
+                equip.save()
+            
+            return redirect("room_list")
+    else:
+        form = RoomForm()
+        formset = RoomEquipmentFormSet()
+    
+    return render(request, "app/room_form.html", {"form": form, "formset":formset})
+
+def room_update(request, pk):
+    room = Room.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = RoomForm(request.POST, instance=room)
+        formset = RoomEquipmentFormSet(request.POST, instance=room)
+
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect("room_list")
+    
+    else:
+        form = RoomForm(instance=room)
+        formset = RoomEquipmentFormSet(instance=room)
+    
+    return render(request, "app/room_form.html", {"form":form,"formset":formset})
 
 class RoomDeleteView(DeleteView):
     model = Room
     success_url = reverse_lazy("room_list")
 
+# views da sala com os equipamentos
+
+class RoomDetailView(DetailView):
+    model = Room
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["equipment"] = RoomEquipment.objects.filter(room=self.object)
+        return context
+        
 #views do usuario (user)
 
 class UserListView(ListView):

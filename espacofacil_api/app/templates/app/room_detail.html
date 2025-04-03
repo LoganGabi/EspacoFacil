@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Detalhes da Sala: {{ room.nameRoom }}</h2>
+  <p>Capacidade: {{ room.headCount }} pessoas</p>
+  <p>Gerente: {{ room.roomManager.name }}</p>
+
+  <h3>Equipamentos na Sala</h3>
+  <ul>
+    {% if equipment %}
+      <ul>
+        {% for equip in equipment %}
+          <li>{{ equip.equipment.nameEquipment }} - Quantidade: {{ equip.amount }}</li>
+      
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nenhum equipamento cadastrado.</p>
+  {% endif %}
+  <a href="{% url 'room_list' %}" class="btn btn-secondary">Voltar</a>
+{% endblock %}

@@ -19,6 +19,7 @@
           <td>{{room.roomManager.name}}</td>
           <td>
               <a href={% url "room_update" pk=room.pk %} class="btn btn-primary">Editar</a>
+              <a href={% url "room_detail" pk=room.pk %} class="btn btn-primary">Detalhes</a>
               <a href={% url "room_delete" pk=room.pk %} class="btn btn-danger">Excluir</a>
           </td>
         </tr>

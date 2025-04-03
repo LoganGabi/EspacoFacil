@@ -13,7 +13,7 @@ class Equipment(models.Model):
     nameEquipment = models.CharField(max_length=200)
     
     def __str__(self):
-        return f'Nome do Equipamento: {self.nameEquipment}'
+        return {self.nameEquipment}
 
 class Room(models.Model):
     roomManager = models.ForeignKey(User,on_delete=models.CASCADE)
