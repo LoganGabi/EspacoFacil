@@ -5,7 +5,7 @@ from django.views.generic import (ListView, CreateView,
 from .forms import RoomEquipmentFormSet, RoomForm
 from django.urls import reverse_lazy
 from app.models import Room, User, Equipment, RoomEquipment
-
+from django.db import transaction
 
 def home(request):
     return render(request, "app/home.html")
@@ -17,6 +17,7 @@ class RoomListView(ListView):
     model = Room
 
 
+@transaction.atomic
 def room_create(request):
     if request.method == "POST":
         form = RoomForm(request.POST)
@@ -37,6 +38,7 @@ def room_create(request):
     
     return render(request, "app/room_form.html", {"form": form, "formset":formset})
 
+@transaction.atomic
 def room_update(request, pk):
     room = Room.objects.get(pk=pk)
 
