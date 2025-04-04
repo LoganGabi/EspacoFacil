@@ -1,0 +1,119 @@
+
+h1 {
+    color: #4F39F6;
+}
+
+.table-container h1 {
+    margin-bottom: 50px;
+}
+
+.table-container {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    border: 1px solid rgb(226, 224, 224);
+    border-collapse: collapse;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+  }
+
+table thead tr th {
+    color: rgb(145, 143, 143);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+/* Botões */
+button {
+    border: 1px solid #4F39F6;
+    border-radius: 5px;
+    padding: 4px 10px;
+    margin-bottom: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button a {
+    font-size: 15px;
+    text-decoration: none;
+    color: white;
+}
+
+.button-registry {
+    background-color: #4F39F6;
+    
+}
+
+.button-registry:hover {
+    background-color: #372bc1;
+}
+
+.edit-button{
+    padding: 2px;
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.edit-button:hover{
+    background-color: #0056b3;
+}
+
+.detail-button{
+    background-color: #28a745;
+    border-color: #28a745;
+    
+}
+.detail-button:hover{
+    background-color: #218838;
+}
+.delete-button{
+    padding: 2px;
+    background-color: #dc3545; 
+    
+    border-color:  #dc3545; 
+}
+
+.delete-button:hover{
+    
+    background-color: #c82333;
+}
+.actions {
+    margin-top: 15px;
+    display: flex;
+    align-items: center; /* Alinha os botões verticalmente */
+    gap: 8px;
+  }
+
+tbody tr:nth-child(even) {
+    background-color: #f1efef; 
+  }
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; 
+  }
+
+tbody tr {
+    border-top: 1px solid #e0e0e0; 
+  }
+
+/* Garante que a tabela tenha bordas arredondadas */
+table {
+    width: 100%;
+    border: 1px solid rgb(226, 224, 224);
+    border-radius: 8px;
+    border-collapse: separate; /* Permite bordas arredondadas */
+    border-spacing: 0; /* Remove espaços extras entre as células */
+    overflow: hidden; /* Garante que os cantos arredondados apareçam */
+}
+
+
+

@@ -1,31 +1,52 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">id</th>
-      <th scope="col">Nome da sala</th>
-      <th scope="col">capacidade</th>
-      <th scope="col">Responsavel</th>
-      <th scope="col">Ações</th>
-    </tr>
-  </thead>
-  <tbody>
-      {% for room in room_list %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock  %}
+
+<div class="table-container">
+  <h1>Espaços</h1>
+  <button class="button-registry">
+    <a href={% url "room_create" %}>+ Adicionar Espaço</a>
+  </button>
+ 
+  <table class="table">
+    <thead>
       <tr>
-          <th scope="row">{{room.pk}}</th>
-          <td>{{room.nameRoom}}</td>
-          <td>{{room.headCount}}</td>
-          <td>{{room.roomManager.name}}</td>
-          <td>
-              <a href={% url "room_update" pk=room.pk %} class="btn btn-primary">Editar</a>
-              <a href={% url "room_detail" pk=room.pk %} class="btn btn-primary">Detalhes</a>
-              <a href={% url "room_delete" pk=room.pk %} class="btn btn-danger">Excluir</a>
-          </td>
-        </tr>
-      {% endfor %}
-  </tbody>
-</table>
-<a href={% url "room_create" %} class="btn btn-primary">Cadastrar</a>
+        <th scope="col">ID</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Capacidade</th>
+        <th scope="col">Responsável</th>
+        <th scope="col">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for room in room_list %}
+        <tr>
+            <th scope="row">{{room.pk}}</th>
+            <td>{{room.nameRoom}}</td>
+            <td>{{room.headCount}}</td>
+            <td>{{room.roomManager.name}}</td>
+            <td class="actions">
+              <button class="edit-button">
+                <a href={% url "room_update" pk=room.pk %} class="btn btn-primary">Editar</a>
+              </button>
+                
+              <button class="detail-button">
+                <a href={% url "room_detail" pk=room.pk %} class="btn btn-primary">Detalhes</a>
+              </button>
+               
+              <button class="delete-button">
+                <a href={% url "room_delete" pk=room.pk %} class="btn btn-danger">Excluir</a>
+              </button>
+                
+            </td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock content %}
 
