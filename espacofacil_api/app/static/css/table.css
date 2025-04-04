@@ -68,6 +68,7 @@ button a {
 }
 
 .detail-button{
+    padding: 2px;
     background-color: #28a745;
     border-color: #28a745;
     

@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (ListView, CreateView, 
                                   UpdateView, DeleteView,
                                   DetailView, View)
-from .forms import RoomEquipmentFormSet, RoomForm
+from .forms import RoomEquipmentForm, RoomEquipmentFormSet, RoomForm
 from django.urls import reverse_lazy
 from app.models import Room, User, Equipment, RoomEquipment
 from django.db import transaction
+from django.forms import inlineformset_factory
+
 
 def home(request):
     return render(request, "app/home.html")
@@ -19,6 +21,10 @@ class RoomListView(ListView):
 
 @transaction.atomic
 def room_create(request):
+    
+    RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
+                                             form=RoomEquipmentForm,
+                                             extra=1, can_delete=True)
     if request.method == "POST":
         form = RoomForm(request.POST)
         formset = RoomEquipmentFormSet(request.POST)
@@ -26,10 +32,14 @@ def room_create(request):
         if form.is_valid() and formset.is_valid():
             room = form.save()
             room_equipments = formset.save(commit=False)
+       
+            for deleted_equipment in formset.deleted_objects:
+                deleted_equipment.delete()
 
             for equip in room_equipments:
                 equip.room = room
                 equip.save()
+        
             
             return redirect("room_list")
     else:
@@ -40,6 +50,9 @@ def room_create(request):
 
 @transaction.atomic
 def room_update(request, pk):
+    RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
+                                             form=RoomEquipmentForm,
+                                             extra=0, can_delete=True)
     room = Room.objects.get(pk=pk)
 
     if request.method == "POST":
@@ -48,7 +61,12 @@ def room_update(request, pk):
 
         if form.is_valid() and formset.is_valid():
             form.save()
-            formset.save()
+            room_equipments = formset.save(commit=False)
+            for deleted_equipment in formset.deleted_objects:
+                deleted_equipment.delete()
+            
+            for equip in room_equipments:
+                equip.save()
             return redirect("room_list")
     
     else:
