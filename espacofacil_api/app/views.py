@@ -4,10 +4,11 @@ from django.views.generic import (ListView, CreateView,
                                   DetailView, View)
 from .forms import RoomEquipmentForm, RoomEquipmentFormSet, RoomForm
 from django.urls import reverse_lazy
-from app.models import Room, User, Equipment, RoomEquipment
+from app.models import Occupancy, Room, User, Equipment, RoomEquipment
 from django.db import transaction
+from django.db.models import Q
 from django.forms import inlineformset_factory
-
+from django import forms
 
 def home(request):
     return render(request, "app/home.html")
@@ -126,3 +127,37 @@ class EquipmentUpdateView(UpdateView):
 class EquipmentDeleteView(DeleteView):
     model = Equipment
     success_url = reverse_lazy("equipment_list")
+
+
+# INCOMPLETO
+class OccupancyCreateView(CreateView):
+    model = Occupancy
+    fields = '__all__'
+
+    # def get_form(self,form_class=None):
+    #     form = super().get_form(form_class)
+        
+    #     form.fields['date_start'].widget = forms.DateTimeField(attrs={'type':'datetime-local'})
+    def form_valid(self,form):
+        room  = form.cleaned_data["room"]
+        date_start = form.cleaned_data["date_start"]
+        date_end = form.cleaned_data["date_end"]
+        room = get_object_or_404(Room,id="room_id")
+        if Occupancy.objects.filter(
+            room = room
+        ).filter(
+            Q(date_start_in__lt=date_start)
+            &
+            Q(date_end_in__gt = date_end)
+        ).exists():
+            form.add_error(None,"Já existe uma ocupação nesse intervalo de datas!")
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
+# OBJETIVO : MOSTRAR OS HORARIOS OCUPADOS REFERENTES AQUELA SALA ESPECIFICA
+def occupancy_view(request,idRoom):
+    allOcuppancys = Occupancy.objects.filter(room = idRoom)
+    context = {
+        'Occupancys':allOcuppancys
+    }
+    return render(request,"app/occupancy_list.html",context)
