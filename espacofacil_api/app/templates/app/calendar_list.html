@@ -8,31 +8,19 @@
 <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
 {% endblock %}
 {% block content %}
-<head>
-    <meta name="csrf-token" content="{{ csrf_token }}">
-  </head>
-<div class="container-datetime" data-idroom="{{idRoom}}" id="container">
-
+<div class="container-datetime">
     <div class="calendar-container">
         <div id="calendar" class="calendar"></div>
     </div>
     <div class="time-container">
-        <select name="occupants" id="occupants">
-            {% for user in users %}
-            <option value="{{ user.id }}">{{user.name}}</option>
-            {% endfor %}
-        </select>
         <div class="horario">
-            <label for="hora">Tempo Inicial:</label>
-            <input type="time" name="time_start" id="time_start">
-        </div>
-
-        <div class="horario">
-            <label for="hora">Tempo Final:</label>
-            <input type="time" name="time_end" id="time_end">
+            <label for="hora">Hora:</label>
+            <input type="number" id="hora" name="hora" min="0" max="23" placeholder="00">
+    
+            <label for="minuto">Minuto:</label>
+            <input type="number" id="minuto" name="minuto" min="0" max="59" placeholder="00">
         </div>
         
-        <button type="submit" onclick="addTime()">Adicionar Horário</button>
     </div>
 </div>
 

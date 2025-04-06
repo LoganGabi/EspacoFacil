@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
 {% block content %}
   <h2>Detalhes da Sala: {{ room.nameRoom }}</h2>
   <p>Capacidade: {{ room.headCount }} pessoas</p>
@@ -16,5 +23,6 @@
   {% else %}
     <p>Nenhum equipamento cadastrado.</p>
   {% endif %}
-  <a href="{% url 'room_list' %}" class="btn btn-secondary">Voltar</a>
+
+
 {% endblock %}

@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-from app.views import home, occupancy_view
+from app.views import home, occupancy_create, occupancy_view
 
 from app.views import (
     RoomListView, room_create, room_update,RoomDeleteView,RoomDetailView,
     UserListView, UserCreateView, UserUpdateView, UserDeleteView,
-    EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView,OccupancyCreateView)      
+    EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView)      
 
 urlpatterns = [
     path("", home, name="home"),
@@ -23,6 +23,6 @@ urlpatterns = [
     path("updateEquipmnet/<int:pk>",EquipmentUpdateView.as_view(),name="equipment_update"),
     path("deleteEquipmnet/<int:pk>",EquipmentDeleteView.as_view(),name="equipment_delete"),
     path("room/<int:pk>/", RoomDetailView.as_view(), name="room_detail"),
-    path("OccupancyCreate",OccupancyCreateView.as_view(),name="occupancy_create"),
-    path("occupancys_list/<int:idRoom>",occupancy_view,name="occupancy_list")
+    path("OccupancyCreate/<int:idRoom>/",occupancy_create,name="occupancy_create"),
+    path("occupancys_list/<int:idRoom>",occupancy_view,name="occupancy_list"),
 ] 

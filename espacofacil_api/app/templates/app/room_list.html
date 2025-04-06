@@ -41,6 +41,10 @@
               <button class="delete-button">
                 <a href={% url "room_delete" pk=room.pk %} class="btn btn-danger">Excluir</a>
               </button>
+
+              <button class="calendar-button">
+                <a href={% url "occupancy_list" idRoom=room.pk %}>Agenda</a>
+              </button>
                 
             </td>
           </tr>

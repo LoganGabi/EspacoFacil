@@ -9,6 +9,10 @@ from django.db import transaction
 from django.db.models import Q
 from django.forms import inlineformset_factory
 from django import forms
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, JsonResponse
+import json
+from datetime import time
 
 def home(request):
     return render(request, "app/home.html")
@@ -128,36 +132,60 @@ class EquipmentDeleteView(DeleteView):
     model = Equipment
     success_url = reverse_lazy("equipment_list")
 
-
-# INCOMPLETO
-class OccupancyCreateView(CreateView):
-    model = Occupancy
-    fields = '__all__'
-
-    # def get_form(self,form_class=None):
-    #     form = super().get_form(form_class)
-        
-    #     form.fields['date_start'].widget = forms.DateTimeField(attrs={'type':'datetime-local'})
-    def form_valid(self,form):
-        room  = form.cleaned_data["room"]
-        date_start = form.cleaned_data["date_start"]
-        date_end = form.cleaned_data["date_end"]
-        room = get_object_or_404(Room,id="room_id")
-        if Occupancy.objects.filter(
-            room = room
-        ).filter(
-            Q(date_start_in__lt=date_start)
-            &
-            Q(date_end_in__gt = date_end)
-        ).exists():
-            form.add_error(None,"Já existe uma ocupação nesse intervalo de datas!")
-            return self.form_invalid(form)
-        return super().form_valid(form)
-
-# OBJETIVO : MOSTRAR OS HORARIOS OCUPADOS REFERENTES AQUELA SALA ESPECIFICA
 def occupancy_view(request,idRoom):
-    allOcuppancys = Occupancy.objects.filter(room = idRoom)
-    context = {
-        'Occupancys':allOcuppancys
-    }
-    return render(request,"app/occupancy_list.html",context)
+    users = User.objects.all()
+    return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
+
+
+def occupancy_create(request,idRoom):
+        if request.method == 'GET':
+            return HttpResponse(f"Rota recebida com idRoom: {idRoom}")
+        if request.method == "POST":
+            print("oooo")
+            try:
+                dados = json.loads(request.body)
+
+                day = dados.get("day")
+                time_start = dados.get("time_start")
+                time_end = dados.get("time_end")
+
+                occupant = dados.get("occupant")
+                print(occupant)
+
+                print('------')
+                print(day)
+                conflict_exists = Occupancy.objects.filter(
+                room=idRoom,
+                day=day
+                ).filter(
+                    Q(time_start__lte=time_end) & Q(time_end__gte=time_start)
+                ).exists()
+
+                if conflict_exists:
+                    return JsonResponse({"erro": "Já existe dia e horário nesse banco"}, status=400)
+                else:
+
+                    occupancy = Occupancy.objects.create(
+                        room_id = idRoom,
+                        occupant_id = occupant,
+                        day = day,
+                        time_start = time_start,
+                        time_end = time_end,
+                        status = False
+                    )
+
+                    if occupancy.pk:
+                        print("Criado com sucesso!")
+                    else:
+                        print("Erro ao criar")
+                occupancys= Occupancy.objects.filter(room=idRoom,day=day)
+                occupancys = [
+                    {
+                        'id':occupancy.id,
+                        'time_start':occupancy.time_start,
+                        'time_end':occupancy.time_end
+                    } for occupancy in occupancys
+                ]
+                return JsonResponse(occupancys,safe=False)
+            except json.JSONDecodeError:
+                return JsonResponse({"erro": "JSON inválido"}, status=400)
