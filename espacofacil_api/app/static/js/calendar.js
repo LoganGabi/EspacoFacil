@@ -16,7 +16,7 @@ let scheduleList = document.getElementById("schedule-list")
 
 flatpickr("#calendar", {
     inline: true,
-    mode: "multiple", // Faz o calendário sempre visível
+    mode: "single", // Faz o calendário sempre visível
     enableTime: false, // Se quiser selecionar horário também
     dateFormat: "Y-m-d",     // formato da data
     locale: "pt" ,
@@ -29,6 +29,47 @@ flatpickr("#calendar", {
       // Se quiser formatar como string:
       dataFormatada = ultimaData.toISOString().split("T")[0];
       console.log("Última data clicada:", dataFormatada);
+      fetch(`/OccupancyCreate/${idRoom}/`,{
+        method:"POST",
+        headers:{
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body:JSON.stringify({
+          day : dataFormatada
+          // occupant : occupant.value
+        })
+      })
+      .then(response => response.json())
+      .then(results => {
+          let list = document.getElementById("list");
+          scheduleList.removeChild(list);
+          let new_div = document.createElement("div")
+          list = scheduleList.appendChild(new_div);
+          list.id="list";
+          
+          results.forEach(result=>{
+            let div = document.createElement("div")
+            
+            let idOccupant = document.createElement("input");
+            idOccupant.type ="hidden";
+            idOccupant.value = result.id;
+  
+            let new_time_start = document.createElement("input");
+            new_time_start.type = "time";
+            new_time_start.value = result.time_start;
+  
+            let new_time_end = document.createElement("input");
+            new_time_end.type = "time";
+            new_time_end.value = result.time_end;
+  
+            list.appendChild(div)
+            div.appendChild(idOccupant);
+            div.appendChild(new_time_start);
+            div.appendChild(new_time_end);
+  
+          })
+      })
       
       }  
   });
@@ -48,12 +89,33 @@ function addTime(){
       })
     })
     .then(response => response.json())
-    .then(result => {
+    .then(results => {
         let list = document.getElementById("list");
         scheduleList.removeChild(list);
         let new_div = document.createElement("div")
         list = scheduleList.appendChild(new_div);
         list.id="list";
         
+        results.forEach(result=>{
+          let div = document.createElement("div")
+          
+          let idOccupant = document.createElement("input");
+          idOccupant.type ="hidden";
+          idOccupant.value = result.id;
+
+          let new_time_start = document.createElement("input");
+          new_time_start.type = "time";
+          new_time_start.value = result.time_start;
+
+          let new_time_end = document.createElement("input");
+          new_time_end.type = "time";
+          new_time_end.value = result.time_end;
+
+          list.appendChild(div)
+          div.appendChild(idOccupant);
+          div.appendChild(new_time_start);
+          div.appendChild(new_time_end);
+
+        })
     })
 }
