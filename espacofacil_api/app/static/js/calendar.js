@@ -9,6 +9,9 @@ const time_end = document.getElementById("time_end");
 
 const occupant = document.querySelector('select[name="occupants"]');
 console.log(occupant.value)
+
+let scheduleList = document.getElementById("schedule-list")
+
 // const selectOption = occupant.selectOption[0]
 
 flatpickr("#calendar", {
@@ -41,11 +44,16 @@ function addTime(){
         day : dataFormatada,
         time_start : time_start.value,
         time_end : time_end.value,
-        occupant : occupant.value
+        // occupant : occupant.value
       })
     })
     .then(response => response.json())
     .then(result => {
-        console.log(result)
+        let list = document.getElementById("list");
+        scheduleList.removeChild(list);
+        let new_div = document.createElement("div")
+        list = scheduleList.appendChild(new_div);
+        list.id="list";
+        
     })
 }

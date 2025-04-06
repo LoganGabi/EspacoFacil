@@ -167,7 +167,7 @@ def occupancy_create(request,idRoom):
 
                     occupancy = Occupancy.objects.create(
                         room_id = idRoom,
-                        occupant_id = occupant,
+                        # occupant_id = occupant,
                         day = day,
                         time_start = time_start,
                         time_end = time_end,

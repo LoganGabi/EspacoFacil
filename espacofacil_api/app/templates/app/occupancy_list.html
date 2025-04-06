@@ -17,22 +17,31 @@
         <div id="calendar" class="calendar"></div>
     </div>
     <div class="time-container">
-        <select name="occupants" id="occupants">
-            {% for user in users %}
-            <option value="{{ user.id }}">{{user.name}}</option>
-            {% endfor %}
-        </select>
-        <div class="horario">
-            <label for="hora">Tempo Inicial:</label>
-            <input type="time" name="time_start" id="time_start">
+        <div class="">
+            <select name="occupants" id="occupants">
+                {% for user in users %}
+                <option value="{{ user.id }}">{{user.name}}</option>
+                {% endfor %}
+            </select>
+            <div class="horario">
+                <label for="hora">Tempo Inicial:</label>
+                <input type="time" name="time_start" id="time_start">
+            </div>
+    
+            <div class="horario">
+                <label for="hora">Tempo Final:</label>
+                <input type="time" name="time_end" id="time_end">
+            </div>
+            
+            <button type="submit" onclick="addTime()">Adicionar Horário</button>
         </div>
 
-        <div class="horario">
-            <label for="hora">Tempo Final:</label>
-            <input type="time" name="time_end" id="time_end">
+        <div id="schedule-list">
+            <div id="list">
+                
+            </div>
         </div>
-        
-        <button type="submit" onclick="addTime()">Adicionar Horário</button>
+    
     </div>
 </div>
 
