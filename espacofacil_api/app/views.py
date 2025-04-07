@@ -14,6 +14,10 @@ from django.http import HttpResponse, JsonResponse
 import json
 from datetime import time
 
+from django.contrib.auth.hashers import make_password
+from .forms import UserForm
+
+
 def home(request):
     return render(request, "app/home.html")
  
@@ -101,13 +105,20 @@ class UserListView(ListView):
 
 class UserCreateView(CreateView):
     model = User
-    fields = ["name", "phone","email" ]
+    form_class = UserForm
     success_url = reverse_lazy("user_list")
+
+    def form_valid(self, form):
+        # hashing da senha
+        form.instance.password = make_password(form.cleaned_data['password'])
+        return super().form_valid(form)
+
 
 class UserUpdateView(UpdateView):
     model = User
-    fields = ["name", "phone","email"]
+    form_class = UserForm
     success_url = reverse_lazy("user_list")
+
 
 class UserDeleteView(DeleteView):
     model = User

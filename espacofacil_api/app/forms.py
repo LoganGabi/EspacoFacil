@@ -2,6 +2,22 @@ from django import forms
 from django.forms import inlineformset_factory
 from .models import RoomEquipment, Room, User
 
+from django import forms
+from .models import User
+
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = User
+        fields = ['name', 'password', 'phone', 'email']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room

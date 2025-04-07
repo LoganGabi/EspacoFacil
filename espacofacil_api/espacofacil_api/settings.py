@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'espacofacil_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': config('DB_NAME'),  # Nome do banco de dados
+        'NAME': './espacofacil.sqlite',  # Nome do banco de dados
         'USER': config('DB_USER'),  # Usuário do banco de dados
         'PASSWORD': config('DB_PASSWORD'),  # Senha do usuário
         'HOST': config('DB_HOST', default='localhost'),  # Endereço do servidor MySQL
