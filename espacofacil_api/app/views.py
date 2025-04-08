@@ -171,7 +171,7 @@ class EquipmentDeleteView(DeleteView):
 
 
 def occupancy_view(request,idRoom):
-    users = User.objects.all()
+    users = User.objects.filter(room=idRoom)
     return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
 
 
@@ -184,7 +184,7 @@ def occupancy_create(request,idRoom):
             time_start = dados.get("time_start")
             time_end = dados.get("time_end")
 
-            occupant = dados.get("occupant")
+            occupant = dados.get("name_occupant")
             try:
                
                 print(occupant)
@@ -206,10 +206,11 @@ def occupancy_create(request,idRoom):
 
                         occupancy = Occupancy.objects.create(
                             room_id = idRoom,
+                            nameOccupant = occupant,
                             day = day,
                             time_start = time_start,
                             time_end = time_end,
-                            status = False
+                            status = True
                         )
 
                         if occupancy.pk:
@@ -226,6 +227,7 @@ def occupancy_create(request,idRoom):
                 occupancys = [
                     {
                         'id':occupancy.id,
+                        'nameOccupant':occupancy.nameOccupant,
                         'time_start':occupancy.time_start,
                         'time_end':occupancy.time_end
                     } for occupancy in occupancys

@@ -9,7 +9,7 @@ const time_end = document.getElementById("time_end");
 
 const occupant = document.querySelector('select[name="occupants"]');
 console.log(occupant.value)
-
+const nameOccupant = document.getElementById('name_occupant')
 let scheduleList = document.getElementById("schedule-list")
 
 // const selectOption = occupant.selectOption[0]
@@ -62,11 +62,16 @@ flatpickr("#calendar", {
             let new_time_end = document.createElement("input");
             new_time_end.type = "time";
             new_time_end.value = result.time_end;
+
+            let new_occupant = document.createElement("input");
+            new_occupant.type = 'text';
+            new_occupant.value = result.nameOccupant;
   
             list.appendChild(div)
             div.appendChild(idOccupant);
             div.appendChild(new_time_start);
             div.appendChild(new_time_end);
+            div.appendChild(new_occupant);
   
           })
       })
@@ -85,7 +90,7 @@ function addTime(){
         day : dataFormatada,
         time_start : time_start.value,
         time_end : time_end.value,
-        // occupant : occupant.value
+        name_occupant : nameOccupant.value
       })
     })
     .then(response => response.json())
@@ -111,10 +116,15 @@ function addTime(){
           new_time_end.type = "time";
           new_time_end.value = result.time_end;
 
+          let new_occupant = document.createElement("input");
+          new_occupant.type = 'text';
+          new_occupant.value = result.nameOccupant;
+
           list.appendChild(div)
           div.appendChild(idOccupant);
           div.appendChild(new_time_start);
           div.appendChild(new_time_end);
+          div.appendChild(new_occupant)
 
         })
     })

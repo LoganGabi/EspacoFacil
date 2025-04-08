@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class User(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    password = models.CharField(max_length=128, null=False, blank=False)
+    password = models.CharField(max_length=128, null=False, blank=False,default='Admin')
     phone = models.CharField(max_length=15)
     email = models.EmailField(max_length=100,unique=True)
 
@@ -38,6 +38,7 @@ class RoomEquipment(models.Model):
 
 class Occupancy(models.Model):
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
+    nameOccupant = models.CharField(max_length=60,null=True)
     occupant = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     day = models.DateField(null=False,blank=True)
     time_start = models.TimeField(null=False, blank=False)
