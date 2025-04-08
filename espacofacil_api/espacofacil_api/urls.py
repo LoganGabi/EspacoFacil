@@ -10,6 +10,7 @@ from app.views import (
 
 urlpatterns = [
     path("login/", login_view, name="login"),
+    path("logout/", home, name="logout"),
     path("home/", RoomSearchView.as_view(), name="home"),
     path('admin/', admin.site.urls),
     path("roomList", RoomListView.as_view(),name="room_list"),
