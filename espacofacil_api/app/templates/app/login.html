@@ -5,75 +5,9 @@
   <meta charset="UTF-8">
   <title>Login - Espaço Fácil</title>
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-      box-sizing: border-box;
-    }
-    body {
-      background: #fff;
-      display: flex;
-      height: 100vh;
-    }
-    .container {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 5%;
-    }
-    .logo-area {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .logo-area img {
-      width: 70%;
-      max-width: 400px;
-    }
-    .login-area {
-      flex: 1;
-      max-width: 400px;
-      margin: auto;
-    }
-    .login-box {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    h2 {
-      margin-bottom: 10px;
-      color: #4e3ff0;
-    }
-    label {
-      font-weight: bold;
-      color: #333;
-    }
-    input[type="text"],
-    input[type="password"] {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-    }
-    .btn {
-      background-color: #4e3ff0;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn:hover {
-      background-color: #392bdb;
-    }
-  </style>
+  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 </head>
+
 <body>
   <div class="container">
     <div class="logo-area">
@@ -84,18 +18,24 @@
       <form method="post" class="login-box">
         {% csrf_token %}
         <h2>Login</h2>
-        
-        <label for="emailç">Email:</label>
-        <input type="text" name="email" id="email" required>
 
-        <label for="password">Senha:</label>
-        <input type="password" name="password" id="password" required>
+        <div class="form-group">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+
+        <div class="form-group">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+          {{ form.password.errors }}
+        </div>
 
         <button type="submit" class="btn">Entrar</button>
 
-        <!-- {% if form.errors %}
-          <p style="color:red;">Email ou senha inválidos</p>
-        {% endif %} -->
+        {% if form.non_field_errors %}
+          <p style="color:red;">{{ form.non_field_errors }}</p>
+        {% endif %}
       </form>
     </div>
   </div>
