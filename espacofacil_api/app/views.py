@@ -12,41 +12,55 @@ from django.forms import inlineformset_factory
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 from django.contrib import messages
-
 import json
 from datetime import time, datetime
-
 from app.models import Occupancy, Room, User, Equipment, RoomEquipment
+from .forms import RoomEquipmentForm, RoomForm, UserForm, LoginForm
 
-from .forms import RoomEquipmentForm, RoomForm
-from .forms import UserForm
-
+@csrf_exempt
 def login_view(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        senha = request.POST.get("senha")
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            messages.error(request, "Usuário não encontrado.")
-            return render(request, "app/login.html")
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # ou o nome da sua URL de destino
+            else:
+                form.add_error(None, 'Email ou senha inválidos.')
 
-        user_auth = authenticate(request, email=email, password=senha)
+    return render(request, 'login.html', {'form': form})
 
-        if user_auth is not None:
-            login(request, user_auth)
-            return redirect("/home")
-        else:
-            messages.error(request, "Senha incorreta.")
+# def login_view(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+
+#         print("DEBUG - Email:", email)
+#         print("DEBUG - Senha:", password)
+
+#         try:
+#             user_obj = User.objects.get(email=email)
+#             print("DEBUG - Usuário encontrado:", user_obj)
+#             user = authenticate(request, username=user_obj.username, password=password)
+#         except User.DoesNotExist:
+#             print("DEBUG - Usuário com esse email não existe.")
+#             user = None
+
+#         if user is not None:
+#             print("DEBUG - Autenticado com sucesso.")
+#             login(request, user)
+#             return redirect('/home/')  # Certifique-se que essa URL existe
+#         else:
+#             print("DEBUG - Falha na autenticação.")
+#             return render(request, 'app/login.html', {'form': {'errors': True}})
     
-    return render(request, "app/login.html")
-
-def home(request):
-    return render(request, "app/home.html")
- 
+#     print("DEBUG - GET recebido")
+#     return render(request, 'app/login.html')
 
 #Views da sala (room)
 
