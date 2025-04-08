@@ -2,9 +2,16 @@ from django import forms
 from django.forms import inlineformset_factory
 from .models import RoomEquipment, Room, User
 
-from django import forms
-from .models import User
+class LoginForm(forms.ModelForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
+    class Meta:
+        fields = ['email', 'password']
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
