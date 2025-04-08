@@ -11,6 +11,9 @@ from django import forms
 from django.forms import inlineformset_factory
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 import json
 from datetime import time, datetime
@@ -20,6 +23,26 @@ from app.models import Occupancy, Room, User, Equipment, RoomEquipment
 from .forms import RoomEquipmentForm, RoomForm
 from .forms import UserForm
 
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        senha = request.POST.get("senha")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Usuário não encontrado.")
+            return render(request, "app/login.html")
+
+        user_auth = authenticate(request, email=email, password=senha)
+
+        if user_auth is not None:
+            login(request, user_auth)
+            return redirect("/home")
+        else:
+            messages.error(request, "Senha incorreta.")
+    
+    return render(request, "app/login.html")
 
 def home(request):
     return render(request, "app/home.html")
