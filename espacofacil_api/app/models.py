@@ -1,11 +1,19 @@
 from django.db import models
 
 # Create your models here.
+
+class UserType(models.Model):
+    type = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.type
+
 class User(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     password = models.CharField(max_length=128, null=False, blank=False)
     phone = models.CharField(max_length=15)
     email = models.EmailField(max_length=100,unique=True)
+    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name},{self.phone},{self.email}'

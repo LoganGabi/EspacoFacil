@@ -18,11 +18,12 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['name', 'password', 'phone', 'email']
+        fields = ['name', 'password', 'phone', 'email', 'user_type']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'user_type': forms.Select(attrs={'class': 'form-control'}),
         }
 
 class RoomForm(forms.ModelForm):
