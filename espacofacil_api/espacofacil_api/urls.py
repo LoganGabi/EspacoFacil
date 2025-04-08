@@ -5,10 +5,11 @@ from app.views import home, occupancy_create, occupancy_view
 from app.views import (
     RoomListView, room_create, room_update,RoomDeleteView,RoomDetailView,
     UserListView, UserCreateView, UserUpdateView, UserDeleteView,
-    EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView)      
+    EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView,
+    RoomSearchView)      
 
 urlpatterns = [
-    path("", home, name="home"),
+    path("", RoomSearchView.as_view(), name="home"),
     path('admin/', admin.site.urls),
     path("roomList", RoomListView.as_view(),name="room_list"),
     path("roomCreate", room_create,name="room_create"),

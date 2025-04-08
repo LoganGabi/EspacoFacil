@@ -1,20 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (ListView, CreateView, 
                                   UpdateView, DeleteView,
-                                  DetailView, View)
-from .forms import RoomEquipmentForm, RoomEquipmentFormSet, RoomForm
+                                  DetailView)
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
-from app.models import Occupancy, Room, User, Equipment, RoomEquipment
 from django.db import transaction
 from django.db.models import Q
-from django.forms import inlineformset_factory
 from django import forms
-from django.views.decorators.csrf import csrf_exempt
+from django.forms import inlineformset_factory
 from django.http import HttpResponse, JsonResponse
-import json
-from datetime import time
-
 from django.contrib.auth.hashers import make_password
+
+import json
+from datetime import time, datetime
+
+from app.models import Occupancy, Room, User, Equipment, RoomEquipment
+
+from .forms import RoomEquipmentForm, RoomForm
 from .forms import UserForm
 
 
@@ -206,3 +209,59 @@ def occupancy_create(request,idRoom):
                 ]
                 return JsonResponse(occupancys,safe=False)
     
+
+# View da pesquisa das salas.
+
+class RoomSearchView(View):
+    def get(self, request):
+        # Formulario de busca
+        name_query = request.GET.get("name","").strip()
+        head_count_query = request.GET.get("headCount")
+        equipment_query = request.GET.get("equipments","").strip()
+        date_query = request.GET.get("date")
+        time_start_query = request.GET.get("time_start")
+        time_end_query = request.GET.get("time_end")
+    
+        rooms = Room.objects.all()
+
+        # Filtros
+
+        if name_query:
+            name_terms = [term.strip() for term in name_query.split(",") if term.strip()]
+            q_obj = Q()
+            for name in name_terms:
+                q_obj |= Q(nameRoom__icontains=name)
+            rooms = rooms.filter(q_obj)
+
+        if head_count_query:
+            try:
+                rooms = rooms.filter(headCount__gte=int(head_count_query))
+            except ValueError:
+                pass
+        
+        if equipment_query:
+            equipment_names = [e.strip() for e in equipment_query.split(",") if e.strip()]
+            for name in equipment_names:
+                rooms = rooms.filter(
+                    roomequipment__equipment__nameEquipment__icontains=name
+                ).distinct()
+        
+        if date_query and time_start_query and time_end_query:
+            try:
+                date_obj = datetime.strptime(date_query, "%Y-%m-%d").date()
+                time_end_obj = datetime.strptime(time_end_query, "%H:%M").time()
+                time_start_obj = datetime.strptime(time_start_query, '%H:%M').time()
+                occupied_rooms = Occupancy.objects.filter(
+                    day=date_obj,
+                    status = True
+                ).filter(
+                    Q(time_start__lt=time_end_obj) & Q(time_end__gt=time_start_obj)
+                ).values_list("room_id",flat=True)
+
+                rooms = rooms.exclude(id__in=occupied_rooms)
+            except ValueError:
+                pass
+        
+        rooms = rooms.order_by("headCount")
+
+        return render(request, "app/home.html", {"rooms":rooms})

@@ -32,7 +32,7 @@ class RoomEquipment(models.Model):
     amount = models.IntegerField()
 
     def __str__(self):
-        return f'O espaço armazena {self.equipment} equipamentos'
+        return self.equipment.nameEquipment
 
 
 
