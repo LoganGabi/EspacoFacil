@@ -6,12 +6,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block css %}
+        {% load bootstrap5 %}
+        {% bootstrap_javascript %}
+        {% bootstrap_css %}
         <link rel="stylesheet" href="{% static 'css/menu.css' %}" >
+        <link rel="stylesheet" href="base.css" >
         {% endblock  %}
 
     </head>
     <body>
-      <div class="container">
+      <div class="container-main">
         <section class="section-container">
           <div>
             <a href= {% url "home" %}>
