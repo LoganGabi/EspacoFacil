@@ -49,6 +49,9 @@
               Nenhum equipamento
             {% endif %}
           {% endwith %}
+          <button class="calendar-button">
+            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar</a>
+          </button>
         </li>
       {% empty %}
         <li class="list-group-item">Nenhuma sala encontrada com esses critérios.</li>
