@@ -33,7 +33,7 @@ def login_view(request):
             else:
                 form.add_error(None, 'Email ou senha inválidos.')
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'app/login.html', {'form': form})
 
 # def login_view(request):
 #     if request.method == 'POST':
