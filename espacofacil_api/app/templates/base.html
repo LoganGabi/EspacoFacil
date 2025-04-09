@@ -5,13 +5,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block css %}
-        {% load bootstrap5 %}
+        {% load django_bootstrap5 %}
         {% bootstrap_javascript %}
         {% bootstrap_css %}
         <link rel="stylesheet" href="{% static 'css/menu.css' %}" >
         <link rel="stylesheet" href="base.css" >
         <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-        {% endblock  %}
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        {% endblock %}
     </head>
     <body>
       <div class="container-main">
@@ -21,7 +22,7 @@
             <img src="{% static 'images/LOGO.png' %}" alt="Miha logo" >
             </a>
           </div>
-          
+  
   
           <ul>
             <li>
@@ -38,18 +39,29 @@
               <a href={% url "room_list" %}>
                 Espaços
               </a>
-             </li>
+            </li>
             <li>
               <a href="">
                 Agendamentos
               </a>
-             </li>
+            </li>
             <li>
               <a href={% url "equipment_list" %}>
                 Equipamentos
               </a>
             </li>
+            <li class="logout">
+              <a href="{% url 'logout' %}">
+                <i class="fas fa-user-circle"></i>
+                <span>Logout</span>
+              </a>
+            </li>
           </ul>
+          
+          {% comment %} <!-- Adicionando o link de logout aqui -->
+          <div class="logout">
+            <a href="{% url 'logout' %}">Logout</a>
+          </div> {% endcomment %}
         
         </section>
         <main class="content">
@@ -58,4 +70,4 @@
       </div>
       
     </body>
-  </html>
+</html>

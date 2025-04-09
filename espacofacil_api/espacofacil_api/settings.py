@@ -110,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'app.User'
+LOGOUT_REDIRECT_URL = 'login'  
 
 
 

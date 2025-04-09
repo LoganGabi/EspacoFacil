@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from app.views import occupancy_create, occupancy_view, login_view
+from django.contrib.auth import views as auth_views
+
 
 from app.views import (
     RoomListView, room_create, room_update,RoomDeleteView,RoomDetailView,
@@ -10,7 +12,7 @@ from app.views import (
 
 urlpatterns = [
     path("login/", login_view, name="login"),
-    # path("logout/", home, name="logout"),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path("home/", RoomSearchView.as_view(), name="home"),
     path('admin/', admin.site.urls),
     path("roomList", RoomListView.as_view(),name="room_list"),
