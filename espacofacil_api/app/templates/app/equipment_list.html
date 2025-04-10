@@ -1,10 +1,23 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+
 {% block content %}
-<table class="table">
+<div class="table-container">
+  <h1>Equipamentos</h1>
+  <button class="button-registry">
+    <a href={% url "equipment_create" %} class="btn btn-primary">Cadastrar</a>
+  </button>
+  <table class="table">
     <thead>
       <tr>
-        <th scope="col">id</th>
+        <th scope="col">ID</th>
         <th scope="col">Nome do equipamento</th>
+        <th scope="col">Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -12,13 +25,21 @@
         <tr>
             <th scope="row">{{equipment.pk}}</th>
             <td>{{equipment.nameEquipment}}</td>
-            <td>
-                <a href={% url "equipment_update" pk=equipment.pk %} class="btn btn-primary">Editar</a>
-                <a href={% url "equipment_delete" pk=equipment.pk %} class="btn btn-danger">Excluir</a>
+            <td class="actions">
+                <button class="edit-button">
+                  <a href={% url "equipment_update" pk=equipment.pk %} class="btn btn-primary">Editar</a>
+                </button>
+                
+                <button class="delete-button">
+                  <a href={% url "equipment_delete" pk=equipment.pk %} class="btn btn-danger">Excluir</a>
+                </button>
+      
             </td>
           </tr>
         {% endfor %}
     </tbody>
   </table>
-  <a href={% url "equipment_create" %} class="btn btn-primary">Cadastrar</a>
+</div>
+
+  
 {% endblock content %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+{% block content %}
+  <h2>Detalhes da Sala: {{ room.nameRoom }}</h2>
+  <p>Capacidade: {{ room.headCount }} pessoas</p>
+  <p>Gerente: {{ room.roomManager.name }}</p>
+
+  <h3>Equipamentos na Sala</h3>
+  <ul>
+    {% if equipment %}
+      <ul>
+        {% for equip in equipment %}
+          <li>{{ equip.equipment.nameEquipment }} - Quantidade: {{ equip.amount }}</li>
+      
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nenhum equipamento cadastrado.</p>
+  {% endif %}
+
+
+{% endblock %}

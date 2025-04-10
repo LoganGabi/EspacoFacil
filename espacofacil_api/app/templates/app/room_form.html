@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
-{% if room.pk %}
+{% if form.instance.pk %}
     <h2>Editar Sala<h2>
 {% else %}
     <h2>Nova Sala<h2>
@@ -8,17 +9,26 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form.nameRoom.label_tag }} {{ form.nameRoom }} <br>
-    {{ form.headCount.label_tag }} {{ form.headCount }} <br>
+    <div></div>
+    <fieldset>
+        <legend>Detalhes da Sala</legend>
+        {{ form.as_p }}
+    </fieldset>
 
-    <label for="id_roomManager">Gerente da Sala:</label>
-    <select name="roomManager" id="id_roomManager">
-        <option value="" selected>---</option>
-        {% for user in form.roomManager.field.queryset %}
-            <option value="{{ user.pk }}">{{ user.name }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <fieldset>
+        <legend>Equipamentos</legend>
+        {{ formset.management_form }}
+        <div id="equipments">
+            {% for form in formset %}
+                <div class="equipment-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Salvar</button>
   </form>
+
+  <script src="{% static 'js/addItem.js' %}"></script>
 {% endblock content %}
 

@@ -1,1 +1,63 @@
 {% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Buscar Salas</h2>
+    <form method="get" class="row g-3">
+      <div class="col-md-6">
+        <label for="name" class="form-label">Nome da Sala (separe por vírgulas):</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Sala 101, Auditório" value="{{ request.GET.name}}">
+      </div>
+      <div class="col-md-6">
+        <label for="equipments" class="form-label">Equipamentos (separe por vírgulas):</label>
+        <input type="text" class="form-control" id="equipments" name="equipments" placeholder="Ex: Computador, Projetor" value="{{ request.GET.equipments}}">
+      </div>
+      <div class="col-md-3">
+        <label for="headCount" class="form-label">Capacidade mínima:</label>
+        <input type="number" class="form-control" id="headCount" name="headCount" min="1" value="{{request.GET.headCount}}">
+      </div>
+      <div class="col-md-3">
+        <label for="date" class="form-label">Data:</label>
+        <input type="date" class="form-control" id="date" name="date" value="{{ request.GET.date}}">
+      </div>
+      <div class="col-md-3">
+        <label for="time_start" class="form-label">Hora início:</label>
+        <input type="time" class="form-control" id="time_start" name="time_start" value="{{ request.GET.time_start}}">
+      </div>
+      <div class="col-md-3">
+        <label for="time_end" class="form-label">Hora fim:</label>
+        <input type="time" class="form-control" id="time_end" name="time_end" value="{{ request.GET.time_end}}">
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+      </div>
+    </form>
+</div>
+<div>
+    {% if request.GET %}
+    <hr>
+    <h3>Salas Encontradas:</h3>
+    <ul class="list-group">
+      {% for room in rooms %}
+        <li class="list-group-item">
+          <strong>{{ room.nameRoom }}</strong> — Capacidade: {{ room.headCount }}<br>
+          Gerente: {{ room.roomManager.name }}<br>
+          Equipamentos:
+          {% with room.roomequipment_set.all as equipment_list %}
+            {% if equipment_list %}
+              {{ equipment_list|join:", " }}
+            {% else %}
+              Nenhum equipamento
+            {% endif %}
+          {% endwith %}
+          <button class="calendar-button">
+            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar</a>
+          </button>
+        </li>
+      {% empty %}
+        <li class="list-group-item">Nenhuma sala encontrada com esses critérios.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+{% endblock content %}
+

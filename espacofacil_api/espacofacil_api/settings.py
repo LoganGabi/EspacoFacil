@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'corsheaders',
+    'bootstrap5'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'espacofacil_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': config('DB_NAME'),  # Nome do banco de dados
+        'NAME': './espacofacil.sqlite',  # Nome do banco de dados
         'USER': config('DB_USER'),  # Usuário do banco de dados
         'PASSWORD': config('DB_PASSWORD'),  # Senha do usuário
         'HOST': config('DB_HOST', default='localhost'),  # Endereço do servidor MySQL
@@ -87,6 +88,8 @@ DATABASES = {
     }
 }
 
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -105,6 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'app.User'
+LOGOUT_REDIRECT_URL = 'login'  
+
 
 
 # Internationalization

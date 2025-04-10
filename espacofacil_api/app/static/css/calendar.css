@@ -1,0 +1,22 @@
+.calendar-container{
+    margin: 0;
+    width: 60%;
+    height: 100vh;
+    background-color: #4F39F6;
+    display: flex;
+    justify-content: center; /* centraliza horizontalmente */
+    align-items: center
+}
+.time-container{
+      margin-left: 20px;  
+      height: 100vh;
+      width: 500px;
+      background-color: antiquewhite;
+}
+
+.calendar{}
+
+.container-datetime{
+    display: flex;
+    flex-direction: row;
+}
