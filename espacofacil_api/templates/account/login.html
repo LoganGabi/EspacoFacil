@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Espaço Fácil2</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+</head>
+
+<body>  
+  <div class="container">
+    <div class="logo-area">
+        <img src="{% static 'images/LOGOLOGIN.png' %}" alt="Espaço Facil">
+    </div>
+
+    <div class="login-area">
+      <form method="post" class="login-box">
+        {% csrf_token %}
+        <h2>Login</h2>
+      
+        <div class="form-group">
+          {{ form.login.label_tag }}
+          {{ form.login }}
+          {{ form.login.errors }}
+        </div>
+      
+        <div class="form-group">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+          {{ form.password.errors }}
+        </div>
+      
+        <div class="form-group">
+          {{ form.remember.label_tag }}
+          {{ form.remember }}
+          {{ form.remember.errors }}
+        </div>
+      
+        <button type="submit" class="btn">Entrar</button>
+      
+        {% if form.non_field_errors %}
+          <p style="color:red;">{{ form.non_field_errors }}</p>
+        {% endif %}
+      </form>      
+    </div>
+  </div>
+</body>
+</html>

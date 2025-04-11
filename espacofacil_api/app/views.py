@@ -17,6 +17,10 @@ import json
 from datetime import time, datetime
 from app.models import Occupancy, Room, User, Equipment, RoomEquipment
 from .forms import RoomEquipmentForm, RoomForm, UserForm, LoginForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
+
 
 @csrf_exempt
 def login_view(request):
@@ -64,11 +68,12 @@ def login_view(request):
 
 #Views da sala (room)
 
-class RoomListView(ListView):
+class RoomListView(LoginRequiredMixin, ListView):
     model = Room
 
 
 @transaction.atomic
+@login_required
 def room_create(request):
     
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
@@ -98,6 +103,7 @@ def room_create(request):
     return render(request, "app/room_form.html", {"form": form, "formset":formset})
 
 @transaction.atomic
+@login_required
 def room_update(request, pk):
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
@@ -124,13 +130,13 @@ def room_update(request, pk):
     
     return render(request, "app/room_form.html", {"form":form,"formset":formset})
 
-class RoomDeleteView(DeleteView):
+class RoomDeleteView(LoginRequiredMixin, DeleteView):
     model = Room
     success_url = reverse_lazy("room_list")
 
 # views da sala com os equipamentos
 
-class RoomDetailView(DetailView):
+class RoomDetailView(LoginRequiredMixin, DetailView):
     model = Room
 
     def get_context_data(self, **kwargs):
@@ -140,10 +146,10 @@ class RoomDetailView(DetailView):
         
 #views do usuario (user)
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, ListView):
     model = User
 
-class UserCreateView(CreateView):
+class UserCreateView(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserForm
     success_url = reverse_lazy("user_list")
@@ -154,41 +160,41 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
     success_url = reverse_lazy("user_list")
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy("user_list")
 
 #views do equipamento
 
-class EquipmentListView(ListView):
+class EquipmentListView(LoginRequiredMixin, ListView):
     model = Equipment
 
-class EquipmentCreateView(CreateView):
-    model = Equipment
-    fields = ["nameEquipment"]
-    success_url = reverse_lazy("equipment_list")
-
-class EquipmentUpdateView(UpdateView):
+class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
     fields = ["nameEquipment"]
     success_url = reverse_lazy("equipment_list")
 
-class EquipmentDeleteView(DeleteView):
+class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Equipment
+    fields = ["nameEquipment"]
+    success_url = reverse_lazy("equipment_list")
+
+class EquipmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Equipment
     success_url = reverse_lazy("equipment_list")
 
-
+@login_required
 def occupancy_view(request,idRoom):
     users = User.objects.filter(room=idRoom)
     return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
 
-
+@login_required
 def occupancy_create(request,idRoom):
             
         if request.method == "POST":
@@ -251,7 +257,7 @@ def occupancy_create(request,idRoom):
 
 # View da pesquisa das salas.
 
-class RoomSearchView(View):
+class RoomSearchView(LoginRequiredMixin, View):
     def get(self, request):
         # Formulario de busca
         name_query = request.GET.get("name","").strip()
