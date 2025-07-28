@@ -4,8 +4,7 @@
 
 <b>Desgin figma:</b> https://www.figma.com/design/lrlSXj7DE2oQmMoQBYDuye/Espaco-Facil?node-id=5-3&t=DZ7F5VsrxsusPGxz-1
 
-<b>Documento de Requisitos:</b> https://docs.google.com/document/d/1a_3z7jKvRkCrg0Vn9_o1aU7DkxGIDywj2bSRaKDiMEk/edit?usp=sharing
-
+<b>Documento de Requisitos:</b> https://docs.google.com/document/d/17a0FGlAt899scT_it9LaTSinnnT-zXBRiINy1despq8/edit?tab=t.0
 <h3>🧑‍💻 Como rodar o projeto</h3>
 <b>Clonar o projeto:</b>
 
