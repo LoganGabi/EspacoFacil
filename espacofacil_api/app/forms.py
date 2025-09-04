@@ -23,6 +23,18 @@ class RoomForm(forms.ModelForm):
         model = Room
         fields = ["nameRoom","headCount","roomManager"]
 
+        labels = {
+            'nameRoom': 'Nome da Sala',
+            'headCount': 'Capacidade Máxima',
+            'roomManager': 'Responsável pela Sala',
+        }
+
+        widgets = {
+            'nameRoom': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'   }),
+            'headCount': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'step': '1', 'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');'}),
+            'roomManager': forms.Select(attrs={'class': 'form-control form-select'})
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["roomManager"].queryset = User.objects.all()
@@ -32,10 +44,33 @@ class RoomEquipmentForm(forms.ModelForm):
     class Meta:
         model = RoomEquipment
         fields = ["equipment", "amount"]
+
+        labels = {
+            'equipment': 'Equipamento',
+            'amount': 'Quantidade'
+        }
+
+        widgets = {
+            'equipment': forms.Select(attrs={'class': 'form-control form-select'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'step': '1', 'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');'}),
+        }
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["equipment"].label_from_instance = lambda obj: obj.nameEquipment
+
+        if self.fields.get('DELETE'):
+            self.fields['DELETE'].label = 'Equipamento Removido'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        equipment = cleaned_data.get("equipment")
+        amount = cleaned_data.get("amount")
+
+        if equipment and not amount:
+            self.add_error('amount', 'Por favor, insira a quantidade para o equipamento selecionado.')
+
+        return cleaned_data
       
 
 RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
