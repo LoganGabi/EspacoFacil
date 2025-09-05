@@ -10,9 +10,9 @@
 {% block content %}
 <head>
     <meta name="csrf-token" content="{{ csrf_token }}">
-  </head>
+</head>
 <div class="container-datetime" data-idroom="{{idRoom}}" id="container">
-
+    {% csrf_token %}
     <div class="calendar-container">
         <div id="calendar" class="calendar"></div>
     </div>
@@ -41,7 +41,8 @@
         <div id="schedule-list">
             <h4>Horários</h4>
             <div id="list">
-              
+               <!-- <button id="edit-time">Editar Horário</button>
+            <button id="delete-time">Cancelar Horário</button> -->
             </div>
         </div>
     
@@ -52,10 +53,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 <script src="{% static 'js/calendar.js' %}"></script>
-<script>
-  
-
-</script>
 {% endblock %}
 
 

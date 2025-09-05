@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from app.views import occupancy_create, occupancy_view, login_view
+from app.views import occupancy_create, occupancy_delete, occupancy_view, login_view
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('deleteEquipmnet/<int:pk>/',EquipmentDeleteView.as_view(),name="equipment_delete"),
     path('room/<int:pk>/', RoomDetailView.as_view(), name="room_detail"),
     path('OccupancyCreate/<int:idRoom>/',occupancy_create,name="occupancy_create"),
+    path("occupancys_list/OccupancyDelete/<int:idRoom>",occupancy_delete,name="occupancy_delete"),
     path('occupancys_list/<int:idRoom>',occupancy_view,name="occupancy_list"),
 
 ] 

@@ -78,4 +78,4 @@ class Occupancy(models.Model):
     status = models.BooleanField()
 
     def __str__(self):
-        return f'Espaco reservado na data: {self.date}'
+        return f'Espaco reservado na data: {self.day}'

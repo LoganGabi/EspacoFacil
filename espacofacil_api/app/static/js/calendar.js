@@ -66,12 +66,36 @@ flatpickr("#calendar", {
             let new_occupant = document.createElement("input");
             new_occupant.type = 'text';
             new_occupant.value = result.nameOccupant;
+
+            let form = document.createElement("form");
+            form.action = `OccupancyDelete/${result.id}`;
+            form.method = "POST";
+
+            let csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "csrfmiddlewaretoken";
+            csrf.value = document.querySelector("[name=csrfmiddlewaretoken]").value;
+            form.appendChild(csrf);       
+
+            let edit_button = document.createElement("button");
+            edit_button.id = `edit-button-${result.id}`;
+            edit_button.textContent = "Editar Horário";
+            edit_button.value = result.id;
+
+            let delete_button = document.createElement("button");
+            delete_button.id = `delete-button-${result.id}`;
+            delete_button.textContent = "Deletar Horário";
+            delete_button.value = result.id;
+
+            form.appendChild(delete_button);
   
             list.appendChild(div)
             div.appendChild(idOccupant);
             div.appendChild(new_time_start);
             div.appendChild(new_time_end);
             div.appendChild(new_occupant);
+            div.appendChild(edit_button);
+            div.appendChild(form);
   
           })
       })
@@ -120,11 +144,36 @@ function addTime(){
           new_occupant.type = 'text';
           new_occupant.value = result.nameOccupant;
 
-          list.appendChild(div)
+          let form = document.createElement("form");
+          form.action = `{% url 'occupancy_delete' pk=${occupancy.pk} %}`;
+          form.method = "POST";
+          let csrf = document.createElement("input");
+          csrf.type = "hidden";
+          csrf.name = "csrfmiddlewaretoken";
+          csrf.value = document.querySelector("[name=csrfmiddlewaretoken]").value;
+          form.appendChild(csrf);
+
+          let edit_button = document.createElement("button");
+          edit_button.id = `edit-button-${result.id}`;
+          edit_button.textContent = "Editar Horário";
+          edit_button.value = result.id;
+
+          let delete_button = document.createElement("button");
+          delete_button.id = `delete-button-${result.id}`;
+          delete_button.textContent = "Deletar Horário";
+          delete_button.value = result.id;
+
+          form.appendChild(delete_button);
+
+          list.appendChild(div);
           div.appendChild(idOccupant);
           div.appendChild(new_time_start);
           div.appendChild(new_time_end);
-          div.appendChild(new_occupant)
+          div.appendChild(new_occupant);
+
+          div.appendChild(edit_button);
+          div.appendChild(form);
+          console.log(form);
 
         })
     })

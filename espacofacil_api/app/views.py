@@ -254,7 +254,13 @@ def occupancy_create(request,idRoom):
                 ]
                 return JsonResponse(occupancys,safe=False)
     
-
+def occupancy_delete(request,idRoom):
+    if request.POST:
+        occupancy = get_object_or_404(Occupancy,id = idRoom)
+        users = User.objects.filter(room=idRoom)
+        occupancy.delete()
+        # return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
+        return redirect("occupancy_list")
 # View da pesquisa das salas.
 
 class RoomSearchView(LoginRequiredMixin, View):
