@@ -196,7 +196,6 @@ def occupancy_view(request,idRoom):
 
 @login_required
 def occupancy_create(request,idRoom):
-            
         if request.method == "POST":
             dados = json.loads(request.body)
 
@@ -206,10 +205,6 @@ def occupancy_create(request,idRoom):
 
             occupant = dados.get("name_occupant")
             try:
-               
-                print(occupant)
-                print(time_start)
-                print('------')
                 # PRECISA AJEITAR A LOGICA
                 # DATAS QUE OCORREM EM HORARIOS JA MARCADOS TA RETORNANDO ERRO NO FRONTEND
                 if day and time_start and time_end:
@@ -243,6 +238,7 @@ def occupancy_create(request,idRoom):
                 return JsonResponse({"erro": "JSON inválido"}, status=400)
             
             if day:
+                print("vammooooo, yesss")
                 occupancys= Occupancy.objects.filter(room=idRoom,day=day)
                 occupancys = [
                     {
@@ -254,13 +250,12 @@ def occupancy_create(request,idRoom):
                 ]
                 return JsonResponse(occupancys,safe=False)
     
-def occupancy_delete(request,idRoom):
-    if request.POST:
-        occupancy = get_object_or_404(Occupancy,id = idRoom)
-        users = User.objects.filter(room=idRoom)
+def occupancy_delete(request,idOccupancy):
+    if request.method == "POST":
+        occupancy = get_object_or_404(Occupancy,pk = idOccupancy)
+        id_occupancy = occupancy.room.id
         occupancy.delete()
-        # return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
-        return redirect("occupancy_list")
+        return occupancy_create(request,id_occupancy)
 # View da pesquisa das salas.
 
 class RoomSearchView(LoginRequiredMixin, View):
