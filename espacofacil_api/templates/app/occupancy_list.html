@@ -18,9 +18,7 @@
     </div>
     <div class="time-container">
         <div class="">
-            <select name="occupants" id="occupants">
-               
-            </select>
+
             <div class="horario">
                 <label for="hora">Tempo Inicial:</label>
                 <input type="time" name="time_start" id="time_start">
@@ -32,7 +30,12 @@
             </div>
 
             <div>
-                <input type="text" id="name_occupant" name="name_occupant">
+                <select name="" id="occupantRoom">
+                    {% for occupant in occupants %}
+                        <option value="{{ occupant.id }}">{{occupant.firstName}}</option>
+                    {% endfor %}
+                </select>
+                <!-- <input type="text" id="name_occupant" name="name_occupant"> -->
             </div>
             
             <button type="submit" onclick="addTime()">Adicionar Horário</button>

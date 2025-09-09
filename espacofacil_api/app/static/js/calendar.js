@@ -8,7 +8,7 @@ const time_end = document.getElementById("time_end");
 
 const occupant = document.querySelector('select[name="occupants"]');
 
-const nameOccupant = document.getElementById('name_occupant');
+const occupantRoom = document.getElementById('occupantRoom');
 let scheduleList = document.getElementById("schedule-list");
 
 function createTime(list,result){
@@ -21,14 +21,21 @@ function createTime(list,result){
     let new_time_start = document.createElement("input");
     new_time_start.type = "time";
     new_time_start.value = result.time_start;
+    new_time_start.readOnly = true;
 
     let new_time_end = document.createElement("input");
     new_time_end.type = "time";
     new_time_end.value = result.time_end;
+    new_time_end.readOnly = true;
 
     let new_occupant = document.createElement("input");
     new_occupant.type = 'text';
-    new_occupant.value = result.nameOccupant;
+    new_occupant.value = result.occupant;
+  
+    if(result.occupant == null){
+      new_occupant.value = "Nenhum Ocupante"
+    }
+    new_occupant.readOnly = true;
 
     let form = document.createElement("form");
     form.action = `OccupancyDelete/${result.id}`;
@@ -44,6 +51,14 @@ function createTime(list,result){
     edit_button.id = `edit-button-${result.id}`;
     edit_button.textContent = "Editar Horário";
     edit_button.value = result.id;
+    
+    edit_button.onclick  = () => edit(edit_button);
+
+    // Guarda a URL como atributo data
+    const baseUrl = window.location.origin; // ex: http://localhost:8000
+    edit_button.dataset.action = `${baseUrl}/OccupancyUpdate/${result.id}`;
+
+    // edit_button.dataset.action = `OccupancyUpdate/${result.id}`;
 
     let delete_button = document.createElement("button");
     delete_button.id = `delete-button-${result.id}`;
@@ -109,7 +124,6 @@ flatpickr("#calendar", {
   
       // Se quiser formatar como string:
       dataFormatada = ultimaData.toISOString().split("T")[0];
-      console.log("Última data clicada:", dataFormatada);
       fetch(`/OccupancyCreate/${idRoom}/`,{
         method:"POST",
         headers:{
@@ -118,7 +132,6 @@ flatpickr("#calendar", {
         },
         body:JSON.stringify({
           day : dataFormatada
-          // occupant : occupant.value
         })
       })
       .then(response => response.json())
@@ -131,7 +144,6 @@ flatpickr("#calendar", {
           list.id="list";
           
           results.forEach(result=>{
-            
             // CRIAÇÃO DOS INPUTS E BOTÕES DE OCUPÂNCIA
             createTime(list,result);
           })
@@ -141,6 +153,7 @@ flatpickr("#calendar", {
   });
 
 function addTime(){
+    console.log(occupantRoom.value);
     fetch(`/OccupancyCreate/${idRoom}/`,{
       method:"POST",
       headers:{
@@ -151,7 +164,7 @@ function addTime(){
         day : dataFormatada,
         time_start : time_start.value,
         time_end : time_end.value,
-        name_occupant : nameOccupant.value
+        occupant : occupantRoom.value
       })
     })
     .then(response => response.json())
@@ -171,3 +184,8 @@ function addTime(){
     })
 }
 
+function edit(edit_button){
+  const actionUrl = edit_button.dataset.action;
+
+  window.location.href = actionUrl;
+}

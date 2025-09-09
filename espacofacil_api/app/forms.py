@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import RoomEquipment, Room, User
+from .models import Occupancy, RoomEquipment, Room, User
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
@@ -17,6 +17,18 @@ class UserForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'user_type': forms.Select(attrs={'class': 'form-control'}),
         }
+
+
+
+class OccupancyForm(forms.ModelForm):
+    class Meta:
+        model = Occupancy
+        exclude = ["room"]
+        widgets = {
+            'time_start': forms.TimeInput(attrs={'type': 'time'}),
+            'time_end': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
 
 class RoomForm(forms.ModelForm):
     class Meta:
