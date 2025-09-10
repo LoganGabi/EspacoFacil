@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Occupancy, RoomEquipment, Room, User
+from .models import Equipment, Occupancy, RoomEquipment, Room, User
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
@@ -91,3 +91,14 @@ class RoomEquipmentForm(forms.ModelForm):
 RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
                                              extra=1, can_delete=True)
+
+class EquipmentForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ["nameEquipment"]
+        labels = {
+            'nameEquipment': 'Nome do Equipamento'
+        }
+        widgets = {
+            'nameEquipment': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+        }
