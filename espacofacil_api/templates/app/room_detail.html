@@ -3,20 +3,37 @@
 {% load static %}
 
 {% block content %}
-  <h1>Visualizando detalhes do Espaço</h1>
-  <p>Nome: {{ room.nameRoom }}</p>
-  <p>Capacidade: {{ room.headCount }} pessoas</p>
-  <p>Gerente: {{ room.roomManager.name }}</p>
 
-  <h3>Equipamentos no Espaço</h3>
-  <ul>
-    {% if equipment %}
-      <ul>
+  <h1>Visualizando detalhes do Espaço</h1>
+
+  
+  <h3 class="h3">Detalhes:</h3>
+  <div class="row">
+    <p class="col-6 lead">Nome:<span class="text-muted"> {{ room.nameRoom }}</span></p>
+    <p class="col-6 lead">Capacidade:<span class="text-muted"> {{ room.headCount }} pessoas</span></p>
+    <p class="col-6 lead">Gerente:<span class="text-muted"> {{ room.roomManager.name }}</span></p>
+  </div>
+
+  <hr>
+  
+  <h3 class="h3">Equipamentos no Espaço:</h3>
+  {% if equipment %}
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Equipamento</th>
+          <th scope="col">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for equip in equipment %}
-          <li>{{ equip.equipment.nameEquipment }} - Quantidade: {{ equip.amount }}</li>
-      
-    {% endfor %}
-  </ul>
+        <tr>
+          <td>{{ equip.equipment.nameEquipment }}</td>
+          <td>{{ equip.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   {% else %}
     <p>Nenhum equipamento cadastrado.</p>
   {% endif %}
