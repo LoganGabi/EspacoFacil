@@ -193,8 +193,10 @@ class EquipmentDeleteView(LoginRequiredMixin, DeleteView):
 def occupancy_view(request,idRoom):
     users = User.objects.filter(room=idRoom)
     occupants = Occupant.objects.all()
+    nameRoom = Room.objects.get(pk=idRoom).nameRoom
     return render(request,"app/occupancy_list.html",{
         'idRoom':idRoom,
+        'nameRoom':nameRoom,
         'users':users,
         'occupants':occupants
         }

@@ -33,9 +33,19 @@ class OccupancyForm(forms.ModelForm):
     class Meta:
         model = Occupancy
         exclude = ["room"]
+        labels = {
+            'day': 'Data',
+            'time_start': 'Início',
+            'time_end': 'Término',
+            'occupant': 'Ocupante',
+            'status': 'Ativo',
+        }
         widgets = {
+            'day': forms.DateInput(attrs={'type': 'date'}),
             'time_start': forms.TimeInput(attrs={'type': 'time'}),
             'time_end': forms.TimeInput(attrs={'type': 'time'}),
+            'occupant': forms.Select(attrs={'class': 'form-control form-select'}),
+            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 

@@ -1,48 +1,55 @@
 {% extends "base.html" %}
 
 {% load static %}
+
 {% block content %}
 <head>
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
-<div class="container-datetime" data-idroom="{{idRoom}}" id="container">
+<h1>Realizando Agendamento da Sala {{ room.nameRoom }}</h1>
+<div class="container-fullscreen" data-idroom="{{idRoom}}" id="container">
     {% csrf_token %}
     <div class="calendar-container">
         <div id="calendar" class="calendar"></div>
     </div>
-    <div class="time-container">
-        <div class="">
+</div>
 
+<div id="schedule-modal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3 id="modal-date-title" class="h3">Agendar Horário</h3>
+        
+        <div class="add-time-form">
             <div class="horario">
-                <label for="hora">Tempo Inicial:</label>
+                <label for="time_start">Tempo Inicial:</label>
                 <input type="time" name="time_start" id="time_start">
             </div>
     
             <div class="horario">
-                <label for="hora">Tempo Final:</label>
+                <label for="time_end">Tempo Final:</label>
                 <input type="time" name="time_end" id="time_end">
             </div>
 
             <div>
-                <select name="" id="occupantRoom">
+                <label for="occupantRoom">Ocupante:</label>
+                <select name="occupantRoom" id="occupantRoom" required>
+                <option value="" disabled selected>-- Selecione um ocupante --</option>   
                     {% for occupant in occupants %}
-                        <option value="{{ occupant.id }}">{{occupant.firstName}}</option>
+                        <option value="{{ occupant.id }}">{{ occupant.firstName }} {{ occupant.lastName }}</option>
                     {% endfor %}
                 </select>
-                <!-- <input type="text" id="name_occupant" name="name_occupant"> -->
             </div>
             
-            <button type="submit" onclick="addTime()">+ Adicionar Horário</button>
+            <button type="button" onclick="addTime()">+ Adicionar Horário</button>
         </div>
+        
+        <hr>
 
         <div id="schedule-list">
-            <h4>Horários</h4>
+            <h3 class="h3">Horários Agendados</h3>
             <div id="list">
-               <!-- <button id="edit-time">Editar Horário</button>
-            <button id="delete-time">Cancelar Horário</button> -->
-            </div>
+                </div>
         </div>
-    
     </div>
 </div>
 
@@ -51,5 +58,3 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 <script src="{% static 'js/calendar.js' %}"></script>
 {% endblock %}
-
-
