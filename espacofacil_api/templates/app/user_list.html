@@ -27,12 +27,12 @@
         <td>{{ user.phone }}</td>
         <td>{{ user.email }}</td>
         <td class="actions">
-          <button class="edit-button">
-            <a href="{% url 'user_update' pk=user.pk %}" class="btn btn-primary">Editar</a>
+          <button class="btn btn-outline-primary" onclick="window.location.href='{% url 'user_update' pk=user.pk %}'">
+            Editar            
           </button>
           
-          <button class="delete-button">
-            <a href="{% url 'user_delete' pk=user.pk %}" class="btn btn-danger">Excluir</a>
+          <button class="btn btn-outline-danger" onclick="window.location.href='{% url 'user_delete' pk=user.pk %}'">
+            Excluir
           </button>
          
         </td>
