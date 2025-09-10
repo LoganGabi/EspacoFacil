@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 amountInput.removeAttribute('required');
 
                 // Adiciona 'required' se um equipamento foi selecionado
-                if (equipmentInput.value) {
+                if (equipmentInput.value !== "") {
                     amountInput.setAttribute('required', 'required');
                 }
             }

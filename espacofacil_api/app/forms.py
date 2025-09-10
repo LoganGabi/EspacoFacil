@@ -69,6 +69,9 @@ class RoomEquipmentForm(forms.ModelForm):
 
         if equipment and not amount:
             self.add_error('amount', 'Por favor, insira a quantidade para o equipamento selecionado.')
+        if amount and not equipment:
+            self.add_error('equipment', 'Por favor, selecione um equipamento para a quantidade inserida.')
+
 
         return cleaned_data
       
