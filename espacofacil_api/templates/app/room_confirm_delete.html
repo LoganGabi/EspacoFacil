@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Excluir Sala<h1>
+<h1>Excluindo Espaço</h1>
 
-    <h3>Excluir Sala?<h3>
-    <p>Tem certeza que deseja excluir essa sala <strong> {{room.nameRoom}} </strong> ?</p>
+    <h3>Excluir Espaço?</h3>
+    <p>Tem certeza que deseja excluir esse espaço <strong> {{room.nameRoom}} </strong> ?</p>
     <form method="POST">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Excluir</button>

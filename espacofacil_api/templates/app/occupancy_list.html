@@ -1,26 +1,18 @@
 {% extends "base.html" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 {% load static %}
-{% block css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-<link rel="stylesheet" href="{% static 'css/calendar.css' %}">
-{% endblock %}
 {% block content %}
 <head>
     <meta name="csrf-token" content="{{ csrf_token }}">
-  </head>
+</head>
 <div class="container-datetime" data-idroom="{{idRoom}}" id="container">
-
+    {% csrf_token %}
     <div class="calendar-container">
         <div id="calendar" class="calendar"></div>
     </div>
     <div class="time-container">
         <div class="">
-            <select name="occupants" id="occupants">
-               
-            </select>
+
             <div class="horario">
                 <label for="hora">Tempo Inicial:</label>
                 <input type="time" name="time_start" id="time_start">
@@ -32,16 +24,22 @@
             </div>
 
             <div>
-                <input type="text" id="name_occupant" name="name_occupant">
+                <select name="" id="occupantRoom">
+                    {% for occupant in occupants %}
+                        <option value="{{ occupant.id }}">{{occupant.firstName}}</option>
+                    {% endfor %}
+                </select>
+                <!-- <input type="text" id="name_occupant" name="name_occupant"> -->
             </div>
             
-            <button type="submit" onclick="addTime()">Adicionar Horário</button>
+            <button type="submit" onclick="addTime()">+ Adicionar Horário</button>
         </div>
 
         <div id="schedule-list">
             <h4>Horários</h4>
             <div id="list">
-              
+               <!-- <button id="edit-time">Editar Horário</button>
+            <button id="delete-time">Cancelar Horário</button> -->
             </div>
         </div>
     
@@ -52,10 +50,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 <script src="{% static 'js/calendar.js' %}"></script>
-<script>
-  
-
-</script>
 {% endblock %}
 
 

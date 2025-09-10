@@ -1,12 +1,5 @@
 {% extends "base.html" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% load static %}
-{% block css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-<link rel="stylesheet" href="{% static 'css/calendar.css' %}">
-{% endblock %}
 {% block content %}
 <div class="container-datetime">
     <div class="calendar-container">
@@ -19,6 +12,9 @@
     
             <label for="minuto">Minuto:</label>
             <input type="number" id="minuto" name="minuto" min="0" max="59" placeholder="00">
+
+            <!-- <button id="edit-time">Editar Horário</button>
+            <button id="delete-time">Cancelar Horário</button> -->
         </div>
         
     </div>

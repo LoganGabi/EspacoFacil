@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import RoomEquipment, Room, User
+from .models import Equipment, Occupancy, RoomEquipment, Room, User
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
@@ -18,15 +18,27 @@ class UserForm(forms.ModelForm):
             'user_type': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+
+class OccupancyForm(forms.ModelForm):
+    class Meta:
+        model = Occupancy
+        exclude = ["room"]
+        widgets = {
+            'time_start': forms.TimeInput(attrs={'type': 'time'}),
+            'time_end': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
         fields = ["nameRoom","headCount","roomManager"]
 
         labels = {
-            'nameRoom': 'Nome da Sala',
+            'nameRoom': 'Nome do Espaço',
             'headCount': 'Capacidade Máxima',
-            'roomManager': 'Responsável pela Sala',
+            'roomManager': 'Responsável pelo Espaço',
         }
 
         widgets = {
@@ -69,6 +81,9 @@ class RoomEquipmentForm(forms.ModelForm):
 
         if equipment and not amount:
             self.add_error('amount', 'Por favor, insira a quantidade para o equipamento selecionado.')
+        if amount and not equipment:
+            self.add_error('equipment', 'Por favor, selecione um equipamento para a quantidade inserida.')
+
 
         return cleaned_data
       
@@ -76,3 +91,14 @@ class RoomEquipmentForm(forms.ModelForm):
 RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
                                              extra=1, can_delete=True)
+
+class EquipmentForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ["nameEquipment"]
+        labels = {
+            'nameEquipment': 'Nome do Equipamento'
+        }
+        widgets = {
+            'nameEquipment': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+        }

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.core.validators import MinLengthValidator
 # Create your models here.
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -67,15 +67,35 @@ class RoomEquipment(models.Model):
         return self.equipment.nameEquipment
 
 
-
+class Occupant(models.Model):
+    firstName = models.CharField(verbose_name='firstName',max_length=100)
+    lastName = models.CharField(verbose_name='lastName',max_length=200)
+    cpf = models.CharField(
+        verbose_name='cpf',
+        max_length=11,
+        validators=[MinLengthValidator(11)],
+        help_text="Digite Exatamente 11 números"
+    )
+    email = models.EmailField(verbose_name='email')
+    phone = models.CharField(
+        verbose_name='phone',
+        max_length=11,
+        validators=[MinLengthValidator(11)],
+        help_text='Digite exatamente 11 Números'
+        )
+    def __str__(self):
+        return self.firstName
+    
 class Occupancy(models.Model):
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
-    nameOccupant = models.CharField(max_length=60,null=True)
-    occupant = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    # nameOccupant = models.CharField(max_length=60,null=True)
+    occupant = models.ForeignKey(Occupant,on_delete=models.CASCADE,null=True,blank=True)
     day = models.DateField(null=False,blank=True)
     time_start = models.TimeField(null=False, blank=False)
     time_end = models.TimeField(null=False, blank=False)
     status = models.BooleanField()
 
     def __str__(self):
-        return f'Espaco reservado na data: {self.date}'
+        return f'Espaco reservado na data: {self.day}'
+
+

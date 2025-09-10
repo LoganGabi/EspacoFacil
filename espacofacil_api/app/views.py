@@ -15,8 +15,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 import json
 from datetime import time, datetime
-from app.models import Occupancy, Room, User, Equipment, RoomEquipment
-from .forms import RoomEquipmentForm, RoomForm, UserForm, LoginForm
+from app.models import Occupancy, Occupant, Room, User, Equipment, RoomEquipment
+from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, UserForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -177,7 +177,7 @@ class EquipmentListView(LoginRequiredMixin, ListView):
 
 class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
-    fields = ["nameEquipment"]
+    form_class = EquipmentForm
     success_url = reverse_lazy("equipment_list")
 
 class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
@@ -192,11 +192,16 @@ class EquipmentDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def occupancy_view(request,idRoom):
     users = User.objects.filter(room=idRoom)
-    return render(request,"app/occupancy_list.html",{'idRoom':idRoom,'users':users})
+    occupants = Occupant.objects.all()
+    return render(request,"app/occupancy_list.html",{
+        'idRoom':idRoom,
+        'users':users,
+        'occupants':occupants
+        }
+    )
 
 @login_required
 def occupancy_create(request,idRoom):
-            
         if request.method == "POST":
             dados = json.loads(request.body)
 
@@ -204,12 +209,9 @@ def occupancy_create(request,idRoom):
             time_start = dados.get("time_start")
             time_end = dados.get("time_end")
 
-            occupant = dados.get("name_occupant")
+            occupant = dados.get("occupant")
+            print(occupant)
             try:
-               
-                print(occupant)
-                print(time_start)
-                print('------')
                 # PRECISA AJEITAR A LOGICA
                 # DATAS QUE OCORREM EM HORARIOS JA MARCADOS TA RETORNANDO ERRO NO FRONTEND
                 if day and time_start and time_end:
@@ -223,10 +225,10 @@ def occupancy_create(request,idRoom):
                     if conflict_exists:
                         return JsonResponse({"erro": "Já existe dia e horário nesse banco"}, status=400)
                     else:
-
+                        occupantRoom = get_object_or_404(Occupant,pk=occupant)
                         occupancy = Occupancy.objects.create(
                             room_id = idRoom,
-                            nameOccupant = occupant,
+                            occupant = occupantRoom,
                             day = day,
                             time_start = time_start,
                             time_end = time_end,
@@ -239,22 +241,42 @@ def occupancy_create(request,idRoom):
                             print("Erro ao criar")
 
             except json.JSONDecodeError:
-                print("entrei")
                 return JsonResponse({"erro": "JSON inválido"}, status=400)
             
             if day:
-                occupancys= Occupancy.objects.filter(room=idRoom,day=day)
+                occupancys= Occupancy.objects.filter(room=idRoom,day=day,status=True)
                 occupancys = [
                     {
-                        'id':occupancy.id,
-                        'nameOccupant':occupancy.nameOccupant,
-                        'time_start':occupancy.time_start,
-                        'time_end':occupancy.time_end
-                    } for occupancy in occupancys
+                        'id': occupancy.id,
+                        'occupant': occupancy.occupant.firstName if occupancy.occupant else None,
+                        'time_start': occupancy.time_start.strftime("%H:%M") if occupancy.time_start else None,
+                        'time_end': occupancy.time_end.strftime("%H:%M") if occupancy.time_end else None,
+                    }
+                    for occupancy in occupancys
                 ]
                 return JsonResponse(occupancys,safe=False)
-    
 
+def occupancy_update(request,idOccupancy):
+    occupancy = get_object_or_404(Occupancy, pk=idOccupancy)
+
+    if request.method == "POST":
+        form = OccupancyForm(request.POST, instance=occupancy)
+        if form.is_valid():
+            form.save()
+            return redirect("occupancy_list", idRoom=occupancy.room.id)
+    else:
+        form = OccupancyForm(instance=occupancy)
+
+    return render(request, "app/occupancy_form.html", {"occupancyForm": form})
+
+
+
+def occupancy_delete(request,idOccupancy):
+    if request.method == "POST":
+        occupancy = get_object_or_404(Occupancy,pk = idOccupancy)
+        id_occupancy = occupancy.room.id
+        occupancy.delete()
+        return occupancy_create(request,id_occupancy)
 # View da pesquisa das salas.
 
 class RoomSearchView(LoginRequiredMixin, View):

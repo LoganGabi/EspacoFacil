@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Excluir Usuario<h1>
+<h1>Excluindo Usuário</h1>
 
-    <h3>Excluir tarefa?<h3>
-    <p>Tem certeza que deseja excluir esse usuario <strong> {{user.name}} </strong> ?</p>
+    <h3>Excluir Usuário?</h3>
+    <p>Tem certeza que deseja excluir esse usuário <strong> {{user.name}} </strong> ?</p>
     <form method="POST">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Excluir</button>

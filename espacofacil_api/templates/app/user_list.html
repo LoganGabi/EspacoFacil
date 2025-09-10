@@ -1,17 +1,12 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-{% endblock %}
-
+{% load static %} 
 {% block content %}
+
 <div class="table-container">
   <h1>Usuários</h1>
 
   <button class="button-registry">
-    <a href={% url 'user_create' %} class="btn btn-primary">+ Adicionar Usuário</a>
+    <a href={% url 'user_create' %}>+ Adicionar Usuário</a>
   </button>
 
   <table class="table">

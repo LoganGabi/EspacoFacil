@@ -1,18 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-{% if form.instance.pk %}
-    <h2>Editar Ocupacao<h2>
-{% else %}
-    <h2>Nova Ocupação<h2>
-{% endif %}
+
 
 <form method="post">
     {% csrf_token %}
     <div></div>
     <fieldset>
         <legend>Detalhes da Ocupancia</legend>
-        {{ form }}
+        {{ occupancyForm.as_p }}
     </fieldset>
     <button type="submit" class="btn btn-primary">Salvar</button>
   </form>

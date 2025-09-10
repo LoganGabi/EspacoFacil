@@ -1,18 +1,23 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>  
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block css %}
-        {% load bootstrap5 %}
-        {% bootstrap_javascript %}
-        {% bootstrap_css %}
-        <link rel="stylesheet" href="{% static 'css/reset_css.css' %}">
-        <link rel="stylesheet" href="{% static 'css/menu.css' %}" >
-        <link rel="stylesheet" href="base.css" >
-        <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+          {% load bootstrap5 %}
+          {% bootstrap_javascript %}
+          {% bootstrap_css %}
+          <link rel="stylesheet" href="{% static 'css/reset_css.css' %}">
+          <link rel="stylesheet" href="{% static 'css/menu.css' %}" >
+          <link rel="stylesheet" href="{% static 'css/table.css' %}">
+          <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+          <link rel="stylesheet"  href="{% static 'css/base.css' %}">
+          <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+          
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         {% endblock %}
     </head>
     <body>
@@ -23,52 +28,54 @@
             <img src="{% static 'images/LOGO.png' %}" alt="Miha logo" >
             </a>
           </div>
-  
-  
           <ul>
-            <li>
-              <a href="">
-                Novo Agendamento
-              </a>
-            </li>
-            <li>
-              <a href={% url "user_list" %}>
-                Usuários
-              </a>
-            </li>
-            <li>
-              <a href={% url "room_list" %}>
-                Espaços
-              </a>
-            </li>
-            <li>
-              <a href="">
-                Agendamentos
-              </a>
-            </li>
-            <li>
-              <a href={% url "equipment_list" %}>
-                Equipamentos
-              </a>
-            </li>
-            <li class="logout">
-              <a href="{% url 'logout' %}">
-                <i class="fas fa-user-circle"></i>
-                <span>Logout</span>
-              </a>
-            </li>
+            <div>
+                {% url 'home' as home_url %}
+                <a href="{{ home_url }}" {% if request.path == home_url %}class="clicada"{% endif %}>
+                    <i class="fa-regular fa-calendar-plus"></i>
+                    <li>Novo Agendamento</li>
+                </a>
+
+                <!-- {% url 'home' as home_url %} -->
+                <a href="#" {% if request.path == '#' %}class="clicada"{% endif %}>
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <li>Agendamentos</li>
+                </a>
+
+                {% url 'room_list' as room_list_url %}
+                <a href="{{ room_list_url }}" {% if request.path == room_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <li>Espaços</li>
+                </a>
+
+                {% url 'equipment_list' as equipment_list_url %}
+                <a href="{{ equipment_list_url }}" {% if request.path == equipment_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <li>Equipamentos</li>
+                </a>
+
+                {% url 'user_list' as user_list_url %}
+                <a href="{{ user_list_url }}" {% if request.path == user_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-users"></i>
+                    <li>Usuários</li>
+                </a>
+            </div>
+
+            {% url 'logout' as logout_url %}
+            <a href="{{ logout_url }}">
+                <li class="logout">
+                    <span>Logout</span>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </li>
+            </a>
           </ul>
           
-          {% comment %} <!-- Adicionando o link de logout aqui -->
-          <div class="logout">
-            <a href="{% url 'logout' %}">Logout</a>
-          </div> {% endcomment %}
         
         </section>
         <main class="content">
           {% block content %} {% endblock %}
         </main>
       </div>
-      
+      <script src="https://kit.fontawesome.com/a40bd1232c.js" crossorigin="anonymous"></script>
     </body>
 </html>

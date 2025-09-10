@@ -11,6 +11,7 @@
     background-color: #4F39F6;
     display: flex;
     flex-direction: column;
+    box-shadow: 5px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
 .section-container img{
@@ -26,20 +27,37 @@
     list-style: none; /* Remove a bolinha */
     overflow-y: auto;
     flex-grow: 1; /* Faz com que a lista ocupe o espaço restante */
+    justify-content: space-between;
 }
 
-.section-container ul li{
-    padding: 1em;
+.section-container ul div, .section-container ul a{
+    width: 100%;
     transition: background-color 0.3s ease; 
     color: white;
 }
 
-.section-container ul li:hover{
+.section-container ul a{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    transition: background-color 0.3s ease; 
+    color: white;
+}
+
+.clicada {
+    background-color: #3A28C9;
+}
+
+.section-container ul a:hover{
     background-color: #3A28C9;
     cursor: pointer;
 }
 
-a {
+.section-container ul a .logout{
+    align-self: stretch;
+}
+
+a, a li {
     display: flex;
     align-items: center;  /* Alinha o texto e o ícone */
     width: 100%;  
@@ -50,6 +68,8 @@ a {
 
 /* Estilo específico para o logout */
 .logout {
+    display: flex;
+    justify-content: space-between;
     margin-top: auto; /* Empurra o logout para o final da seção */
     padding: 1em;
 }
