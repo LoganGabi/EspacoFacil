@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container mt-4">
@@ -10,16 +11,16 @@
     {% endif %}
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-            <div class="mb-3">
-                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="text-danger small">{{ field.errors }}</div>
-                {% endif %}
+        {{ form|crispy }}
+
+        <div class="row g-3">
+            <div class="offset-8 col-2">
+                <a href="javascript:history.back()" class="btn btn-danger btn-lg">Cancelar</a>
             </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Salvar</button>
+            <div class="col-2">
+                <button type="submit" class="btn btn-success btn-lg" style="width: 100%;">Salvar</button>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}

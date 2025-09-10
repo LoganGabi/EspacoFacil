@@ -12,10 +12,19 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['name', 'password', 'phone', 'email', 'user_type']
+        labels = {
+            'name': 'Nome',
+            'password': 'Senha',
+            'phone': 'Telefone',
+            'email': 'Email',
+            'user_type': 'Tipo de Usuário',
+        }
         widgets = {
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'user_type': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control password-field'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control phone-mask'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control email-mask'}),
+            'user_type': forms.Select(attrs={'class': 'form-control form-select'}),
         }
 
 
