@@ -1,22 +1,94 @@
-.calendar-container{
-    margin: 0;
-    width: 60%;
-    height: 100vh;
-    background-color: #4F39F6;
-    display: flex;
-    justify-content: center; /* centraliza horizontalmente */
-    align-items: center
-}
-.time-container{
-      margin-left: 20px;  
-      height: 100vh;
-      width: 500px;
-      background-color: antiquewhite;
+/* Para garantir que o calendário ocupe bem o espaço */
+.container-fullscreen {
+    width: 95%;
+    max-width: 1200px;
+    margin: 20px auto;
 }
 
-.calendar{}
+.calendar-container {
+    width: 100%;
+}
 
-.container-datetime{
+/* --- Estilos do Modal --- */
+
+/* Fundo escurecido que cobre a tela inteira */
+.modal-overlay {
+    display: none; /* Escondido por padrão */
+    position: fixed; /* Fica fixo na tela */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente */
+    z-index: 1000; /* Fica na frente de tudo */
+    justify-content: center;
+    align-items: center;
+}
+
+/* O conteúdo do popup */
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Botão de fechar (X) */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #000;
+}
+
+/* Organização do formulário dentro do modal */
+.add-time-form {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#schedule-list h4 {
+    margin-top: 20px;
+}
+
+.flatpickr-calendar {
+    width: 100% !important;
+    height: 100%;
+}
+
+.flatpickr-innerContainer{
+    width: 100%;
+    height: 100%;
+}
+
+.flatpickr-rContainer{
+    width: 100%;
+    height: 100%;
+}
+
+.flatpickr-days {
+    width: 100% !important;
+}
+
+.dayContainer{
+    width: 100% !important;
+    height: 70vh;
+    max-width: none !important;
+    
+    span {
+        max-width: none !important;
+        
+    }
 }
