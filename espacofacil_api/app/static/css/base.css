@@ -10,12 +10,20 @@ h1 {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-h3
-
 .btn .btn-primary {
     background-color: #4F39F6;
 }
 
 .btn .btn-primary:hover{
     background-color: #372bc1;   
+}
+
+.remove_a {
+    color: blue;
+    text-decoration: none;
+}
+
+.remove_a:hover {
+    color: blue;
+    text-decoration: none;
 }
