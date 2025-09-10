@@ -1,18 +1,29 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 <div>
     {% if equipment.pk %}
         <h1>Editando Equipamento</h1>
     {% else %}
-        <h1>Adicionando Equipamento<h1>
+        <h1>Adicionando Equipamento</h1>
     {% endif %}
 
 <form method="post">
     {% csrf_token %}
-    {{form}}
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+    <legend class="h4">Detalhes do Equipamento</legend>
+    <hr>
+    {{ form|crispy }}
+    <div class="row g-3">
+        <div class="offset-8 col-2">
+            <a href="javascript:history.back()" class="btn btn-danger btn-lg">Cancelar</a>
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-success btn-lg" style="width: 100%;">Salvar</button>
+        </div>
+    </div>
+</form>
 {% endblock content %}
-</div>
+</div>  
 
 

@@ -16,7 +16,7 @@ from django.contrib import messages
 import json
 from datetime import time, datetime
 from app.models import Occupancy, Occupant, Room, User, Equipment, RoomEquipment
-from .forms import OccupancyForm, RoomEquipmentForm, RoomForm, UserForm, LoginForm
+from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, UserForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -177,7 +177,7 @@ class EquipmentListView(LoginRequiredMixin, ListView):
 
 class EquipmentCreateView(LoginRequiredMixin, CreateView):
     model = Equipment
-    fields = ["nameEquipment"]
+    form_class = EquipmentForm
     success_url = reverse_lazy("equipment_list")
 
 class EquipmentUpdateView(LoginRequiredMixin, UpdateView):
