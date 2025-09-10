@@ -25,14 +25,14 @@
           </div>
           <ul>
             <div>
-                {% url 'novo_agendamento' as novo_agendamento_url %} {# Supondo que o nome da URL seja 'novo_agendamento' #}
-                <a href="{{ novo_agendamento_url }}" {% if request.path == novo_agendamento_url %}class="clicada"{% endif %}>
+                {% url 'home' as home_url %}
+                <a href="{{ home_url }}" {% if request.path == home_url %}class="clicada"{% endif %}>
                     <i class="fa-regular fa-calendar-plus"></i>
                     <li>Novo Agendamento</li>
                 </a>
 
-                {% url 'home' as home_url %}
-                <a href="{{ home_url }}" {% if request.path == home_url %}class="clicada"{% endif %}>
+                <!-- {% url 'home' as home_url %} -->
+                <a href="#" {% if request.path == '#' %}class="clicada"{% endif %}>
                     <i class="fa-regular fa-calendar-days"></i>
                     <li>Agendamentos</li>
                 </a>
