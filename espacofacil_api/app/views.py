@@ -201,60 +201,69 @@ def occupancy_view(request,idRoom):
     )
 
 @login_required
-def occupancy_create(request,idRoom):
-        if request.method == "POST":
+def occupancy_create(request, idRoom):
+    if request.method == "POST":
+        try:
             dados = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"erro": "JSON inválido"}, status=400)
 
-            day = dados.get("day")
-            time_start = dados.get("time_start")
-            time_end = dados.get("time_end")
+        day = dados.get("day")
+        time_start = dados.get("time_start")
+        time_end = dados.get("time_end")
+        occupant = dados.get("occupant")
 
-            occupant = dados.get("occupant")
-            print(occupant)
-            try:
-                # PRECISA AJEITAR A LOGICA
-                # DATAS QUE OCORREM EM HORARIOS JA MARCADOS TA RETORNANDO ERRO NO FRONTEND
-                if day and time_start and time_end:
-                    conflict_exists = Occupancy.objects.filter(
+        print("DEBUG occupant recebido:", repr(occupant))
+
+        try:
+            if day and time_start and time_end:
+                conflict_exists = Occupancy.objects.filter(
                     room=idRoom,
                     day=day
-                    ).filter(
-                        Q(time_start__lte=time_end) & Q(time_end__gte=time_start)
-                    ).exists()
+                ).filter(
+                    Q(time_start__lte=time_end) & Q(time_end__gte=time_start)
+                ).exists()
 
-                    if conflict_exists:
-                        return JsonResponse({"erro": "Já existe dia e horário nesse banco"}, status=400)
-                    else:
-                        occupantRoom = get_object_or_404(Occupant,pk=occupant)
-                        occupancy = Occupancy.objects.create(
-                            room_id = idRoom,
-                            occupant = occupantRoom,
-                            day = day,
-                            time_start = time_start,
-                            time_end = time_end,
-                            status = True
-                        )
+                if conflict_exists:
+                    return JsonResponse({"erro": "Já existe dia e horário nesse banco"}, status=400)
 
-                        if occupancy.pk:
-                            print("Criado com sucesso!")
-                        else:
-                            print("Erro ao criar")
+                # Só busca occupant se realmente existir valor
+                occupantRoom = None
+                if occupant:
+                    try:
+                        occupantRoom = Occupant.objects.get(pk=occupant)
+                    except Occupant.DoesNotExist:
+                        return JsonResponse({"erro": "O occupant informado não existe"}, status=400)
 
-            except json.JSONDecodeError:
-                return JsonResponse({"erro": "JSON inválido"}, status=400)
-            
-            if day:
-                occupancys= Occupancy.objects.filter(room=idRoom,day=day,status=True)
-                occupancys = [
-                    {
-                        'id': occupancy.id,
-                        'occupant': occupancy.occupant.firstName if occupancy.occupant else None,
-                        'time_start': occupancy.time_start.strftime("%H:%M") if occupancy.time_start else None,
-                        'time_end': occupancy.time_end.strftime("%H:%M") if occupancy.time_end else None,
-                    }
-                    for occupancy in occupancys
-                ]
-                return JsonResponse(occupancys,safe=False)
+                occupancy = Occupancy.objects.create(
+                    room_id=idRoom,
+                    occupant=occupantRoom,
+                    day=day,
+                    time_start=time_start,
+                    time_end=time_end,
+                    status=True
+                )
+
+                if occupancy.pk:
+                    print("Criado com sucesso!")
+                else:
+                    print("Erro ao criar")
+
+        except Exception as e:
+            return JsonResponse({"erro": str(e)}, status=400)
+
+        if day:
+            occupancys = Occupancy.objects.filter(room=idRoom, day=day, status=True)
+            occupancys = [
+                {
+                    "id": occupancy.id,
+                    "occupant": occupancy.occupant.firstName if occupancy.occupant else None,
+                    "time_start": occupancy.time_start.strftime("%H:%M") if occupancy.time_start else None,
+                    "time_end": occupancy.time_end.strftime("%H:%M") if occupancy.time_end else None,
+                }
+                for occupancy in occupancys
+            ]
+            return JsonResponse(occupancys, safe=False)
 
 def occupancy_update(request,idOccupancy):
     occupancy = get_object_or_404(Occupancy, pk=idOccupancy)

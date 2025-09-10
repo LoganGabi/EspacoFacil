@@ -25,9 +25,11 @@
 
             <div>
                 <select name="" id="occupantRoom">
+                    <option value="">Nenhum Ocupante</option>
                     {% for occupant in occupants %}
                         <option value="{{ occupant.id }}">{{occupant.firstName}}</option>
                     {% endfor %}
+                       
                 </select>
                 <!-- <input type="text" id="name_occupant" name="name_occupant"> -->
             </div>
