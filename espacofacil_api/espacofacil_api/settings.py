@@ -45,7 +45,9 @@ INSTALLED_APPS = [
 
     'app',
     'corsheaders',
-    'bootstrap5'
+    'bootstrap5',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 SITE_ID = 1
@@ -162,3 +164,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200"
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
