@@ -1,5 +1,7 @@
-h1 {
+h1, h2, h3, h4, h5, h6 {
     color: #4F39F6;
+}
+h1 {
     margin-bottom: 50px;
     width: 100%;
     font-size: 2.5rem;
@@ -7,6 +9,8 @@ h1 {
     line-height: 1.2;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
+
+h3
 
 .btn .btn-primary {
     background-color: #4F39F6;
