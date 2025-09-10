@@ -5,7 +5,7 @@
 <div class="table-container">
   <h1>Equipamentos</h1>
   <button class="button-registry">
-    <a href={% url "equipment_create" %} class="btn btn-primary">+ Adicionar Equipamento</a>
+    <a href={% url "equipment_create" %}>+ Adicionar Equipamento</a>
   </button>
   <table class="table">
     <thead>
@@ -21,12 +21,13 @@
             <th scope="row">{{equipment.pk}}</th>
             <td>{{equipment.nameEquipment}}</td>
             <td class="actions">
-                <button class="edit-button">
-                  <a href={% url "equipment_update" pk=equipment.pk %} class="btn btn-primary">Editar</a>
+                <button class="btn btn-outline-primary" onclick="window.location.href='{% url 'equipment_update' pk=equipment.pk %}'">
+                  Editar
                 </button>
                 
-                <button class="delete-button">
-                  <a href={% url "equipment_delete" pk=equipment.pk %} class="btn btn-danger">Excluir</a>
+                <button class="btn btn-outline-danger" onclick="window.location.href='{% url 'equipment_delete' pk=equipment.pk %}'">
+                  Excluir
+                
                 </button>
       
             </td>
