@@ -1,12 +1,6 @@
 {% extends "base.html" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 {% load static %}
-{% block css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-<link rel="stylesheet" href="{% static 'css/calendar.css' %}">
-{% endblock %}
 {% block content %}
 <head>
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -38,7 +32,7 @@
                 <!-- <input type="text" id="name_occupant" name="name_occupant"> -->
             </div>
             
-            <button type="submit" onclick="addTime()">Adicionar Horário</button>
+            <button type="submit" onclick="addTime()">+ Adicionar Horário</button>
         </div>
 
         <div id="schedule-list">

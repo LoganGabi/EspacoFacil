@@ -1,0 +1,9 @@
+h1 {
+    color: #4F39F6;
+    margin-bottom: 50px;
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}

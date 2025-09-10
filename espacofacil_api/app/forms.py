@@ -36,9 +36,9 @@ class RoomForm(forms.ModelForm):
         fields = ["nameRoom","headCount","roomManager"]
 
         labels = {
-            'nameRoom': 'Nome da Sala',
+            'nameRoom': 'Nome do Espaço',
             'headCount': 'Capacidade Máxima',
-            'roomManager': 'Responsável pela Sala',
+            'roomManager': 'Responsável pelo Espaço',
         }
 
         widgets = {

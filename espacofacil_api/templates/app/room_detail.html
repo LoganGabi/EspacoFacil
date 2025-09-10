@@ -1,17 +1,14 @@
 {% extends "base.html" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 {% load static %}
-{% block css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-{% endblock %}
+
 {% block content %}
-  <h2>Detalhes da Sala: {{ room.nameRoom }}</h2>
+  <h1>Visualizando detalhes do Espaço</h1>
+  <p>Nome: {{ room.nameRoom }}</p>
   <p>Capacidade: {{ room.headCount }} pessoas</p>
   <p>Gerente: {{ room.roomManager.name }}</p>
 
-  <h3>Equipamentos na Sala</h3>
+  <h3>Equipamentos no Espaço</h3>
   <ul>
     {% if equipment %}
       <ul>

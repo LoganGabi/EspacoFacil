@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     let addButton = document.createElement("button");
-    addButton.textContent = "Adicionar Equipamento";
+    addButton.textContent = "+ Adicionar Equipamento";
     addButton.type = "button";
     addButton.classList.add("btn", "btn-secondary", "mb-3", "btn-sm");
     addButton.onclick = addForm;
