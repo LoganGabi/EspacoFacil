@@ -23,52 +23,54 @@
             <img src="{% static 'images/LOGO.png' %}" alt="Miha logo" >
             </a>
           </div>
-  
-  
           <ul>
-            <li>
-              <a href="">
-                Novo Agendamento
-              </a>
-            </li>
-            <li>
-              <a href={% url "user_list" %}>
-                Usuários
-              </a>
-            </li>
-            <li>
-              <a href={% url "room_list" %}>
-                Espaços
-              </a>
-            </li>
-            <li>
-              <a href="">
-                Agendamentos
-              </a>
-            </li>
-            <li>
-              <a href={% url "equipment_list" %}>
-                Equipamentos
-              </a>
-            </li>
-            <li class="logout">
-              <a href="{% url 'logout' %}">
-                <i class="fas fa-user-circle"></i>
-                <span>Logout</span>
-              </a>
-            </li>
+            <div>
+                {% url 'novo_agendamento' as novo_agendamento_url %} {# Supondo que o nome da URL seja 'novo_agendamento' #}
+                <a href="{{ novo_agendamento_url }}" {% if request.path == novo_agendamento_url %}class="clicada"{% endif %}>
+                    <i class="fa-regular fa-calendar-plus"></i>
+                    <li>Novo Agendamento</li>
+                </a>
+
+                {% url 'home' as home_url %}
+                <a href="{{ home_url }}" {% if request.path == home_url %}class="clicada"{% endif %}>
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <li>Agendamentos</li>
+                </a>
+
+                {% url 'room_list' as room_list_url %}
+                <a href="{{ room_list_url }}" {% if request.path == room_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <li>Espaços</li>
+                </a>
+
+                {% url 'equipment_list' as equipment_list_url %}
+                <a href="{{ equipment_list_url }}" {% if request.path == equipment_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <li>Equipamentos</li>
+                </a>
+
+                {% url 'user_list' as user_list_url %}
+                <a href="{{ user_list_url }}" {% if request.path == user_list_url %}class="clicada"{% endif %}>
+                    <i class="fa-solid fa-users"></i>
+                    <li>Usuários</li>
+                </a>
+            </div>
+
+            {% url 'logout' as logout_url %}
+            <a href="{{ logout_url }}">
+                <li class="logout">
+                    <span>Logout</span>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </li>
+            </a>
           </ul>
           
-          {% comment %} <!-- Adicionando o link de logout aqui -->
-          <div class="logout">
-            <a href="{% url 'logout' %}">Logout</a>
-          </div> {% endcomment %}
         
         </section>
         <main class="content">
           {% block content %} {% endblock %}
         </main>
       </div>
-      
+      <script src="https://kit.fontawesome.com/a40bd1232c.js" crossorigin="anonymous"></script>
     </body>
 </html>
