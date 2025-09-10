@@ -45,6 +45,10 @@ button a {
 .button-registry {
     background-color: #4F39F6;
     
+    a:hover {
+        text-decoration: none;
+        color: white;
+    }
 }
 
 .button-registry:hover {
