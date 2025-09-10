@@ -7,3 +7,11 @@ h1 {
     line-height: 1.2;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
+
+.btn .btn-primary {
+    background-color: #4F39F6;
+}
+
+.btn .btn-primary:hover{
+    background-color: #372bc1;   
+}
