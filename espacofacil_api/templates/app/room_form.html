@@ -1,89 +1,92 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-{% if form.instance.pk %}
-    <h2 class="h1">Editar Espaço<h2>
-{% else %}
-    <h2 class="h1">Adicionando Espaço<h2>
-    <br>
-{% endif %}
 
-<form method="post" class="needs-validation" novalidate>
-    {% csrf_token %}
-    <fieldset>
-        <legend class="h4">Detalhes da Sala</legend>
-        <hr>
-        <div class="row">
-            <div class="mb-3 col-8">
-                {{ form.nameRoom.label_tag }}
-                {{ form.nameRoom }}
-            </div>
-            <div class="mb-3 col-4">
-                {{ form.headCount.label_tag }}
-                {{ form.headCount }}
-            </div>
-            <div class="mb-3 col-12">
-                {{ form.roomManager.label_tag }}
-                {{ form.roomManager }}
-            </div>
-        </div>
+<div class="table-container">
+    {% if form.instance.pk %}
+        <h1>Editando Espaço</h1>
+    {% else %}
+        <h1>Adicionando Espaço</h1>
+        <br>
+    {% endif %}
 
-    </fieldset>
-    <br>
-    <fieldset>
-        <legend class="h4">Equipamentos</legend>
-        <hr>
-        {{ formset.management_form }}
-        <div id="equipments" class="mb-3">
-            {% for form in formset %}
-                <div class="equipment-form-container row">
-                    <div class="mb-3 col-8">
-                        {{ form.equipment.label_tag }}
-                        {{ form.equipment }}
-                    </div>
-                    <div class="mb-3 col-4">
-                        {{ form.amount.label_tag }}
-                        {{ form.amount }}
-                    </div>
-                    <div class="mb-3 col-6">
-                        {{ form.DELETE }} <label for="{{ form.DELETE.id_for_label }}">Remover Equipamento</label>
-                    </div>
-                    {{ form.id }}
-                    {{ form.room }}
-                    {{ form.errors }}
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <fieldset>
+            <legend class="h4">Detalhes do Espaço</legend>
+            <hr>
+            <div class="row">
+                <div class="mb-3 col-8">
+                    {{ form.nameRoom.label_tag }}
+                    {{ form.nameRoom }}
                 </div>
-            {% endfor %}
-        </div>
-    </fieldset>
-    <div class="row g-3">
-        <div class="offset-8 col-2">
-            <a href="javascript:history.back()" class="btn btn-danger btn-lg">Cancelar</a>
-        </div>
-        <div class="col-2">
-            <button type="submit" class="btn btn-success btn-lg" style="width: 100%;">Salvar</button>
-        </div>
-    </div>
-</form>
-  
-<script src="{% static 'js/addItem.js' %}"></script>
-<script>
-    (function () {
-  'use strict'
+                <div class="mb-3 col-4">
+                    {{ form.headCount.label_tag }}
+                    {{ form.headCount }}
+                </div>
+                <div class="mb-3 col-12">
+                    {{ form.roomManager.label_tag }}
+                    {{ form.roomManager }}
+                </div>
+            </div>
 
-  var forms = document.querySelectorAll('.needs-validation')
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend class="h4">Equipamentos</legend>
+            <hr>
+            {{ formset.management_form }}
+            <div id="equipments" class="mb-3">
+                {% for form in formset %}
+                    <div class="equipment-form-container row">
+                        <div class="mb-3 col-8">
+                            {{ form.equipment.label_tag }}
+                            {{ form.equipment }}
+                        </div>
+                        <div class="mb-3 col-4">
+                            {{ form.amount.label_tag }}
+                            {{ form.amount }}
+                        </div>
+                        <div class="mb-3 col-6">
+                            {{ form.DELETE }} <label for="{{ form.DELETE.id_for_label }}">Remover Equipamento</label>
+                        </div>
+                        {{ form.id }}
+                        {{ form.room }}
+                        {{ form.errors }}
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        <div class="row g-3">
+            <div class="offset-8 col-2">
+                <a href="javascript:history.back()" class="btn btn-danger btn-lg">Cancelar</a>
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-success btn-lg" style="width: 100%;">Salvar</button>
+            </div>
+        </div>
+    </form>
+    
+    <script src="{% static 'js/addItem.js' %}"></script>
+    <script>
+        (function () {
+    'use strict'
 
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
+    var forms = document.querySelectorAll('.needs-validation')
 
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
-</script>
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+        }, false)
+        })
+    })()
+    </script>
+</div>
 {% endblock content %}
 

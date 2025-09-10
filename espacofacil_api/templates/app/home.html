@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-5">
-    <h2>Buscar Salas</h2>
+    <h1>Buscando Espaços para Agendar</h1>
     <form method="get" class="row g-3">
       <div class="col-md-6">
-        <label for="name" class="form-label">Nome da Sala (separe por vírgulas):</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Sala 101, Auditório" value="{{ request.GET.name}}">
+        <label for="name" class="form-label">Nome do Espaço (separe por vírgulas):</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Espaço 101, Auditório" value="{{ request.GET.name}}">
       </div>
       <div class="col-md-6">
         <label for="equipments" class="form-label">Equipamentos (separe por vírgulas):</label>
@@ -35,7 +35,7 @@
 <div>
     {% if request.GET %}
     <hr>
-    <h3>Salas Encontradas:</h3>
+    <h3>Espaços Encontrados:</h3>
     <ul class="list-group">
       {% for room in rooms %}
         <li class="list-group-item">
@@ -54,7 +54,7 @@
           </button>
         </li>
       {% empty %}
-        <li class="list-group-item">Nenhuma sala encontrada com esses critérios.</li>
+        <li class="list-group-item">Nenhum espaço encontrado com esses critérios.</li>
       {% endfor %}
     </ul>
   {% endif %}

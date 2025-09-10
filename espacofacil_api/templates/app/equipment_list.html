@@ -1,16 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/table.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="table-container">
   <h1>Equipamentos</h1>
   <button class="button-registry">
-    <a href={% url "equipment_create" %} class="btn btn-primary">Cadastrar</a>
+    <a href={% url "equipment_create" %} class="btn btn-primary">+ Adicionar Equipamento</a>
   </button>
   <table class="table">
     <thead>
