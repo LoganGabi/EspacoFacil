@@ -2,12 +2,19 @@
 {% block content %}
 <h1>Excluindo Equipamento</h1>
 
-    <h3>Excluir Equipamento?<h3>
-    <p>Tem certeza que deseja excluir esse equipamento:  <strong> {{equipment.nameEquipment}} </strong> ?</p>
+    <h3 class="h3">Excluir Equipamento?</h3>
+    <hr>
+    <p class="lead">Tem certeza que deseja excluir esse equipamento:  <strong> {{equipment.nameEquipment}} </strong> ?</p>
     <form method="POST">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Excluir</button>
-        <a href={% url "equipment_list" %} class="btn btn-secondary">cancelar</a>
+        <div class="row g-3">
+            <div class="offset-8 col-2">
+                <a href="javascript:history.back()" class="btn btn-primary btn-lg">Cancelar</a>
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-danger btn-lg" style="width: 100%;">Excluir Espaço</button>
+            </div>
+        </div>
     </form>
 {% endblock content %}
 
