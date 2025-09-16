@@ -15,8 +15,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 import json
 from datetime import time, datetime
-from app.models import Occupancy, Occupant, Room, User, Equipment, RoomEquipment
-from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, UserForm, LoginForm
+from app.models import Occupancy, Occupant, Room, RoomTimeSlot, User, Equipment, RoomEquipment
+from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, RoomTimeSlotForm, RoomTimeslotFormSet, UserForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -78,29 +78,50 @@ def room_create(request):
     
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
-                                             extra=1, can_delete=True)
+                                             formset=RoomTimeslotFormSet,
+                                             extra=1, can_delete=True
+                                            )
+    
+    RoomTimeSlotFormSet = inlineformset_factory( Room,RoomTimeSlot,
+                                            form=RoomTimeSlotForm,
+                                            extra=1,can_delete=True)
+
     if request.method == "POST":
         form = RoomForm(request.POST)
         formset = RoomEquipmentFormSet(request.POST)
+        timeSlotFormset = RoomTimeSlotFormSet(request.POST)
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and formset.is_valid() and timeSlotFormset.is_valid():
             room = form.save()
             room_equipments = formset.save(commit=False)
-       
+            room_time_slots = timeSlotFormset.save(commit=False)
+
             for deleted_equipment in formset.deleted_objects:
                 deleted_equipment.delete()
+
+            for deleted_time_slot in timeSlotFormset.deleted_forms:
+                deleted_time_slot.delete()
 
             for equip in room_equipments:
                 equip.room = room
                 equip.save()
-        
             
+            for time_slot in room_time_slots:
+                time_slot.room = room
+                time_slot.save()
+                  
             return redirect("room_list")
     else:
         form = RoomForm()
         formset = RoomEquipmentFormSet()
-    
-    return render(request, "app/room_form.html", {"form": form, "formset":formset})
+        timeSlotFormset = RoomTimeSlotFormSet()
+
+    context = {
+            'form':form,
+            'formset':formset,
+            'timeSlotFormset':timeSlotFormset
+        }
+    return render(request, "app/room_form.html",context)
 
 @transaction.atomic
 @login_required
@@ -108,27 +129,51 @@ def room_update(request, pk):
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
                                              extra=0, can_delete=True)
+    
+    RoomTimeSlotFormSet = inlineformset_factory( Room,RoomTimeSlot,
+                                            form=RoomTimeSlotForm,
+                                            extra=0,can_delete=True)
+
     room = Room.objects.get(pk=pk)
 
     if request.method == "POST":
         form = RoomForm(request.POST, instance=room)
         formset = RoomEquipmentFormSet(request.POST, instance=room)
+        timeSlotFormset = RoomTimeSlotFormSet(request.POST,instance=room)
 
         if form.is_valid() and formset.is_valid():
             form.save()
             room_equipments = formset.save(commit=False)
+            room_time_slots = timeSlotFormset.save(commit=False)
+
+            for deleted_time_slot in timeSlotFormset.deleted_forms:
+                deleted_time_slot.delete()
+            
             for deleted_equipment in formset.deleted_objects:
                 deleted_equipment.delete()
             
             for equip in room_equipments:
                 equip.save()
+
+            for time_slot in room_time_slots:
+                time_slot.room = room
+                time_slot.save()
+
             return redirect("room_list")
     
     else:
         form = RoomForm(instance=room)
         formset = RoomEquipmentFormSet(instance=room)
+        timeSlotFormset = RoomTimeSlotFormSet(instance=room)
     
-    return render(request, "app/room_form.html", {"form":form,"formset":formset})
+    context = {
+        'form':form,
+        'formset':formset,
+        'timeSlotFormset':timeSlotFormset
+    }
+    
+    return render(request, "app/room_form.html",context)
+
 
 class RoomDeleteView(LoginRequiredMixin, DeleteView):
     model = Room
@@ -301,7 +346,6 @@ class RoomSearchView(LoginRequiredMixin, View):
         time_end_query = request.GET.get("time_end")
     
         rooms = Room.objects.all()
-
         # Filtros
 
         if name_query:

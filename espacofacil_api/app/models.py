@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinLengthValidator
+from django.db import models
+from datetime import timedelta, datetime, time
+
 # Create your models here.
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -48,15 +51,34 @@ class Equipment(models.Model):
     def __str__(self):
         return {self.nameEquipment}
 
+
 class Room(models.Model):
     roomManager = models.ForeignKey(User,on_delete=models.CASCADE)
-    # RoomMetting = models.ForeignKey(RoomMetting,null=True)
     nameRoom = models.CharField(max_length=100, null=False, blank=False)
     headCount = models.IntegerField(null=False, blank=False)
-    
-
     def __str__(self):
         return f'{self.nameRoom} pode conter {self.headCount} indivíduos'
+    
+
+class RoomTimeSlot(models.Model):
+    room = models.ForeignKey(Room,on_delete=models.CASCADE,null=True)
+    time_start = models.TimeField(null=False, blank=False)
+    time_end = models.TimeField(null=False, blank=False)
+    interval = models.DurationField(null=False, blank=False)
+
+    def save(self, *args, **kwargs):
+        start_delta = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
+        end_delta = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
+        total_duration = end_delta - start_delta
+
+        if self.interval <= total_duration:
+            super().save(*args, **kwargs)
+        else:
+            raise ValueError("Intervalo não pode ser maior que a duração total!")
+
+
+
+    
 
 class RoomEquipment(models.Model):
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
@@ -86,9 +108,9 @@ class Occupant(models.Model):
     def __str__(self):
         return self.firstName
     
+
 class Occupancy(models.Model):
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
-    # nameOccupant = models.CharField(max_length=60,null=True)
     occupant = models.ForeignKey(Occupant,on_delete=models.CASCADE,null=True,blank=True)
     day = models.DateField(null=False,blank=True)
     time_start = models.TimeField(null=False, blank=False)
@@ -97,5 +119,7 @@ class Occupancy(models.Model):
 
     def __str__(self):
         return f'Espaco reservado na data: {self.day}'
+
+
 
 

@@ -57,6 +57,35 @@
                 {% endfor %}
             </div>
         </fieldset>
+        <fieldset>
+            <legend class="h4">Horários Disponíveis</legend>
+            <hr>
+            {{ timeSlotFormset.management_form }}
+            <div id="timeslots" class="mb-3">
+                {% for form in timeSlotFormset %}
+                    <div class="timeslot-form-container row">
+                        <div class="mb-3 col-2">
+                            {{ form.time_start.label_tag }}
+                            {{ form.time_start }}
+                        </div>
+                        <div class="mb-3 col-2">
+                            {{ form.time_end.label_tag }}
+                            {{ form.time_end }}
+                        </div>
+                        <div class="mb-3 col-2">
+                            {{ form.interval.label_tag }}
+                            {{ form.interval }}
+                        </div>
+                        <div class="mb-3 col-2">
+                            {{ form.DELETE }} <label for="{{ form.DELETE.id_for_label }}">Remover Intervalo</label>
+                        </div>
+                        {{ form.id }}
+                        {{ form.room }}
+                        {{ form.errors }}
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
         <div class="row g-3">
             <div class="offset-8 col-2">
                 <a href="javascript:history.back()" class="btn btn-danger btn-lg">Cancelar</a>
