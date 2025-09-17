@@ -364,7 +364,6 @@ def occupancy_create(request, idRoom):
 
     # Retorna todos os Occupancy do dia
     occupancys_qs = Occupancy.objects.filter(room=idRoom, day=day).order_by("time_start")
-    occupancys_qs = Occupancy.objects.filter()
     occupancys = [
         {
             "id": o.id,
