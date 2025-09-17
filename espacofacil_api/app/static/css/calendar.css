@@ -27,6 +27,8 @@
 
 /* O conteúdo do popup */
 .modal-content {
+    max-height: 60vh;
+    overflow-y: auto;
     background-color: #fff;
     padding: 25px;
     border-radius: 8px;
