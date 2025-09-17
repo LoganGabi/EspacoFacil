@@ -10,3 +10,5 @@ django-allauth==0.58.2
 django-crispy-forms==2.4
 crispy-bootstrap5==2025.6
 gunicorn==23.0.0
+dj-database-url==3.0.1
+psycopg2-binary==2.9.10
