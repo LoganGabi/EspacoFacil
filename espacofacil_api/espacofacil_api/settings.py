@@ -22,10 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!-8eomgp43(vo3*#m(a=(b!ayw7r*$#72dq-_fmm&0iy)3esjl'
+SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = 'django-insecure-!-8eomgp43(vo3*#m(a=(b!ayw7r*$#72dq-_fmm&0iy)3esjl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -104,8 +105,7 @@ WSGI_APPLICATION = 'espacofacil_api.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
-        # Substitui a configuração padrão do banco de dados pela DATABASE_URL do Render.
-        default='sqlite:///db.sqlite3',
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
         conn_max_age=600
     )
 }
