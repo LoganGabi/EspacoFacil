@@ -1,5 +1,8 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+
+from app.views import auto_create_schedules
+
 from .models import UserType, User
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -30,3 +33,12 @@ def create_default_user(sender, **kwargs):
         print('Usuário padrão criado.')
     else:
         print('Usuário padrão já existe.')
+
+from django.contrib.auth.signals import user_logged_in
+from django.dispatch import receiver
+
+
+# PELO BEM DO PAÍS, NAO DESCOMENTE
+# @receiver(user_logged_in)
+# def create_schedules_after_login(sender, request, user, **kwargs):
+#     auto_create_schedules(request)

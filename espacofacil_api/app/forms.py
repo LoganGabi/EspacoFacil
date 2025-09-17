@@ -140,14 +140,14 @@ class RoomTimeSlotForm(forms.ModelForm):
                 format='%H:%M',
                 
             ),
-            'interval':forms.Select(
-                choices=[
-                    (60, 'De 1h em 1h'),
-                    (120,'De 2h em 2h'),
-                    (180,'De 3h em 3h')
-                ],
-                attrs={'class': 'form-control'}
-            )
+            'interval': forms.Select(
+        choices=[
+            (60, 'De 1h em 1h'),
+            (120, 'De 2h em 2h'),
+            (180, 'De 3h em 3h')
+        ],
+        attrs={'class': 'form-control'}
+)
         }
 
     def clean(self):
@@ -174,22 +174,31 @@ class RoomTimeSlotForm(forms.ModelForm):
 class RoomTimeslotFormSet(BaseInlineFormSet):
     def clean(self):
         super().clean()
-
+        print('Estou sendo chamado????')
         intervals = []
+
         for form in self.forms:
-            if form.cleaned_data.get("DELETE",False):
+            print(self.forms,'ooooooo')
+            if form.cleaned_data.get("DELETE", False):
                 continue
+
             time_start = form.cleaned_data.get("time_start")
             time_end = form.cleaned_data.get("time_end")
 
-            if time_start and time_end:
-                for start,end in intervals:
-                    if(time_start<end) and(time_end > start):
-                        if (time_start < end) and (time_end > start):
-                            raise ValidationError(
-                            f"O intervalo {time_start}–{time_end} conflita com {start}–{end}"
-                        )
-                intervals.append((time_start, time_end))
+            if not time_start or not time_end:
+                continue
+
+            # Checa sobreposição com todos os intervalos já validados
+            for start, end in intervals:
+                if (time_start < end) and (time_end > start):
+                    form.add_error(
+                        None,  # None marca o erro no form inteiro
+                        f"O intervalo {time_start.strftime('%H:%M')}–{time_end.strftime('%H:%M')} "
+                        f"conflita com {start.strftime('%H:%M')}–{end.strftime('%H:%M')}"
+                    )
+
+            # Adiciona o intervalo atual à lista para checagem dos próximos
+            intervals.append((time_start, time_end))
 
 class EquipmentForm(forms.ModelForm):
     class Meta:

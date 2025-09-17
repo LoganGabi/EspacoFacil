@@ -61,20 +61,22 @@ class Room(models.Model):
     
 
 class RoomTimeSlot(models.Model):
-    room = models.ForeignKey(Room,on_delete=models.CASCADE,null=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
     time_start = models.TimeField(null=False, blank=False)
     time_end = models.TimeField(null=False, blank=False)
-    interval = models.DurationField(null=False, blank=False)
+    interval = models.PositiveIntegerField(default=60)  # assume minutos
 
     def save(self, *args, **kwargs):
-        start_delta = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
-        end_delta = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
-        total_duration = end_delta - start_delta
+        # Converte time_start e time_end em minutos desde 00:00
+        start_minutes = self.time_start.hour * 60 + self.time_start.minute
+        end_minutes = self.time_end.hour * 60 + self.time_end.minute
+        total_duration_minutes = end_minutes - start_minutes
 
-        if self.interval <= total_duration:
+        if self.interval <= total_duration_minutes:
             super().save(*args, **kwargs)
         else:
             raise ValueError("Intervalo não pode ser maior que a duração total!")
+
 
 
 
