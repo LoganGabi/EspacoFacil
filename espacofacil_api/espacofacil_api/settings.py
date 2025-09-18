@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'espacofacil_api.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        default='postgresql://espacofacil_bd_user:Ocf7hfjwnP5ueW3gtk2qu7PmvqWn3KiM@dpg-d35da03uibrs73d2ftl0-a/espacofacil_bd',
         conn_max_age=600
     )
 }
