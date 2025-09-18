@@ -33,7 +33,7 @@ modalOverlay.addEventListener('click', (event) => {
         closeModal();
     }
 });
-
+console.log("iiiiiiiiiii");
 // Função que cria a lista de horários agendados (semelhante à sua original)
 function createTime(list, result) {
     let div = document.createElement("div");
@@ -55,11 +55,11 @@ function createTime(list, result) {
 
     let new_occupant = document.createElement("input");
     new_occupant.type = 'text';
-    new_occupant.value = result.occupant || "Nenhum Ocupante"; // Operador || para simplificar
+    new_occupant.value = result.occupant || "Desocupado"; // Operador || para simplificar
     new_occupant.readOnly = true;
 
     if(result.occupant == null){
-      new_occupant.value = "Nenhum Ocupante"
+      new_occupant.value = "Desocupado"
     }
     new_occupant.readOnly = true;
 
@@ -111,6 +111,7 @@ function createTime(list, result) {
 
 // Função para atualizar a lista de horários no modal
 function updateScheduleList(results) {
+    console.log(results,'talvz')
     const listContainer = document.getElementById("list");
     // Limpa a lista anterior
     listContainer.innerHTML = '';
@@ -151,7 +152,13 @@ function removeTime(button) {
         // A CORREÇÃO ESTÁ AQUI:
         // Simplesmente chame a função que já sabe como atualizar a lista.
         // Ela vai limpar a lista antiga e recriar com os novos dados.
-        updateScheduleList(results);
+        if(results.success){
+             updateScheduleList(results.data);
+        }
+        else{
+            alert(`${results.message}`)
+        }
+       
     })
     .catch(error => console.error('Erro ao deletar:', error));
 }
@@ -183,8 +190,15 @@ flatpickr("#calendar", {
         .then(response => response.json())
         .then(results => {
             // 4. Preenche a lista de horários no modal
-            updateScheduleList(results);
-            
+            console.log('Data: ',results.data);
+            console.log(results);   
+            if(results.success){
+                updateScheduleList(results.data)
+            }
+            else{
+                alert(results.message)
+            }
+            // updateScheduleList(results);
             // 5. Abre o modal
             openModal();
         });
@@ -215,8 +229,13 @@ function addTime() {
     .then(response => response.json())
     .then(results => {
         // Atualiza a lista de horários no modal com os novos dados
-        updateScheduleList(results);
-
+        // updateScheduleList(results);
+            if(results.success){
+                updateScheduleList(results.data)
+            }
+            else{
+                alert(results.message)
+            }
         // Limpa os campos de input de tempo
         time_start.value = '';
         time_end.value = '';

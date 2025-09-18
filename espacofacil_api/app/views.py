@@ -325,6 +325,8 @@ def occupancy_create(request, idRoom):
         return JsonResponse({"erro": "Formato de 'day' inválido, use YYYY-MM-DD"}, status=400)
 
     # Se time_start e time_end estiverem presentes, cria novo Occupancy
+    message = ''
+    success = True
     if time_start_str and time_end_str:
         try:
             time_start = datetime.strptime(time_start_str, "%H:%M").time()
@@ -349,21 +351,26 @@ def occupancy_create(request, idRoom):
         ).exists()
 
         if conflict_exists:
-            return JsonResponse({"erro": "Já existe um horário nesse dia"}, status=400)
-
+            success = False
+            message = 'Ação Cancelada! Horário cadastro em conflito com um já existente'
+            # return JsonResponse({"erro": "Já existe um horário nesse dia"}, status=400)
+        else:
         # Cria o Occupancy
-        occupancy = Occupancy.objects.create(
-            room_id=idRoom,
-            occupant=occupant_obj,
-            day=day,
-            time_start=time_start,
-            time_end=time_end,
-            status=True
-        )
-        print(f"Occupancy criado: {occupancy.id}")
+            success = True
+            message = 'Ocupância criada'
+            occupancy = Occupancy.objects.create(
+                room_id=idRoom,
+                occupant=occupant_obj,
+                day=day,
+                time_start=time_start,
+                time_end=time_end,
+                status=True
+            )
+            print(f"Occupancy criado: {occupancy.id}")
 
     # Retorna todos os Occupancy do dia
     occupancys_qs = Occupancy.objects.filter(room=idRoom, day=day).order_by("time_start")
+    # occupancys_qs = Occupancy.objects.filter()
     occupancys = [
         {
             "id": o.id,
@@ -375,7 +382,14 @@ def occupancy_create(request, idRoom):
     ]
 
     print(f"Occupancies retornados para room {idRoom} no dia {day}: {len(occupancys)}")
-    return JsonResponse(occupancys, safe=False)
+    return JsonResponse(
+        {
+            "message":message,
+            "success":success,
+            "data":occupancys,
+
+        }
+    )
 
 def occupancy_update(request,idOccupancy):
     occupancy = get_object_or_404(Occupancy, pk=idOccupancy)
