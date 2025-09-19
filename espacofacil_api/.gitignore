@@ -1,15 +1,7 @@
-venv/
+# .gitignore corrigido
 
+venv/
 .env
-venv/   
-# Ignorar __pycache__
 __pycache__/
 **/__pycache__/
-
-# Ignorar arquivos dentro de migrations, exceto __init__.py
-migrations/*
-!migrations/__init__.py
-**/migrations/*
-!**/migrations/__init__.py
-
 espacofacil.sqlite
