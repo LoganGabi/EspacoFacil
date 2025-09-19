@@ -15,11 +15,14 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 import json
 from datetime import time, datetime
-from app.models import Occupancy, Occupant, Room, User, Equipment, RoomEquipment
-from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, UserForm, LoginForm
+from app.models import Occupancy, Occupant, Room, RoomTimeSlot, User, Equipment, RoomEquipment
+from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, RoomTimeSlotForm, RoomTimeslotFormSet, UserForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from datetime import date, timedelta, datetime
 
+
+# signals.py
 
 
 @csrf_exempt
@@ -78,29 +81,51 @@ def room_create(request):
     
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
-                                             extra=1, can_delete=True)
+                                            
+                                             extra=1, can_delete=True
+                                            )
+    
+    RoomTimeSlotFormSet = inlineformset_factory( Room,RoomTimeSlot,
+                                            form=RoomTimeSlotForm,
+                                            formset=RoomTimeslotFormSet,
+                                            extra=1,can_delete=True)
+
     if request.method == "POST":
         form = RoomForm(request.POST)
         formset = RoomEquipmentFormSet(request.POST)
+        timeSlotFormset = RoomTimeSlotFormSet(request.POST)
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and formset.is_valid() and timeSlotFormset.is_valid():
             room = form.save()
             room_equipments = formset.save(commit=False)
-       
+            room_time_slots = timeSlotFormset.save(commit=False)
+
             for deleted_equipment in formset.deleted_objects:
                 deleted_equipment.delete()
+
+            for deleted_time_slot in timeSlotFormset.deleted_forms:
+                deleted_time_slot.delete()
 
             for equip in room_equipments:
                 equip.room = room
                 equip.save()
-        
             
+            for time_slot in room_time_slots:
+                time_slot.room = room
+                time_slot.save()
+                  
             return redirect("room_list")
     else:
         form = RoomForm()
         formset = RoomEquipmentFormSet()
-    
-    return render(request, "app/room_form.html", {"form": form, "formset":formset})
+        timeSlotFormset = RoomTimeSlotFormSet()
+
+    context = {
+            'form':form,
+            'formset':formset,
+            'timeSlotFormset':timeSlotFormset
+        }
+    return render(request, "app/room_form.html",context)
 
 @transaction.atomic
 @login_required
@@ -108,28 +133,93 @@ def room_update(request, pk):
     RoomEquipmentFormSet = inlineformset_factory( Room, RoomEquipment,
                                              form=RoomEquipmentForm,
                                              extra=0, can_delete=True)
+    
+    RoomTimeSlotFormSet = inlineformset_factory( Room,RoomTimeSlot,
+                                            form=RoomTimeSlotForm,
+                                            extra=0,can_delete=True)
+
     room = Room.objects.get(pk=pk)
 
     if request.method == "POST":
         form = RoomForm(request.POST, instance=room)
         formset = RoomEquipmentFormSet(request.POST, instance=room)
+        timeSlotFormset = RoomTimeSlotFormSet(request.POST,instance=room)
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and formset.is_valid() and timeSlotFormset.is_valid():
             form.save()
             room_equipments = formset.save(commit=False)
+            room_time_slots = timeSlotFormset.save(commit=False)
+
+            for deleted_time_slot in timeSlotFormset.deleted_forms:
+                deleted_time_slot.delete()
+            
             for deleted_equipment in formset.deleted_objects:
                 deleted_equipment.delete()
             
             for equip in room_equipments:
                 equip.save()
+
+            for time_slot in room_time_slots:
+                time_slot.room = room
+                time_slot.save()
+
             return redirect("room_list")
     
     else:
         form = RoomForm(instance=room)
         formset = RoomEquipmentFormSet(instance=room)
+        timeSlotFormset = RoomTimeSlotFormSet(instance=room)
     
-    return render(request, "app/room_form.html", {"form":form,"formset":formset})
+    context = {
+        'form':form,
+        'formset':formset,
+        'timeSlotFormset':timeSlotFormset
+    }
+    
+    return render(request, "app/room_form.html",context)
 
+
+def auto_create_schedules(request):
+    """
+    Cria ocupações automaticamente para os próximos 14 dias,
+    usando os RoomTimeSlot definidos.
+    """
+    today = date.today()
+    rooms = Room.objects.all()
+
+    for room in rooms:
+        intervals = RoomTimeSlot.objects.filter(room=room)
+
+        for i in range(14):
+            current_date = today + timedelta(days=i)
+
+            for interval in intervals:
+                start_time = datetime.combine(current_date, interval.time_start)
+                end_time = datetime.combine(current_date, interval.time_end)
+                delta = timedelta(minutes=interval.interval)
+
+                current_start = start_time
+                while current_start < end_time:
+                    current_end = min(current_start + delta, end_time)
+
+                    # Evita duplicação
+                    if not Occupancy.objects.filter(
+                        room=room,
+                        day=current_date,
+                        time_start=current_start.time(),
+                        time_end=current_end.time()
+                    ).exists():
+                        Occupancy.objects.create(
+                            room=room,
+                            day=current_date,
+                            time_start=current_start.time(),
+                            time_end=current_end.time(),
+                            status=True
+                        )
+
+                    current_start += delta
+
+            print(f"Horários criados para {room} no dia {current_date}")
 class RoomDeleteView(LoginRequiredMixin, DeleteView):
     model = Room
     success_url = reverse_lazy("room_list")
@@ -193,68 +283,113 @@ class EquipmentDeleteView(LoginRequiredMixin, DeleteView):
 def occupancy_view(request,idRoom):
     users = User.objects.filter(room=idRoom)
     occupants = Occupant.objects.all()
+    nameRoom = Room.objects.get(pk=idRoom).nameRoom
+    
+    auto_create_schedules(request)
     return render(request,"app/occupancy_list.html",{
         'idRoom':idRoom,
+        'nameRoom':nameRoom,
         'users':users,
         'occupants':occupants
         }
     )
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Occupancy, Occupant
+import json
 
 @login_required
-def occupancy_create(request,idRoom):
-        if request.method == "POST":
-            dados = json.loads(request.body)
+def occupancy_create(request, idRoom):
+    if request.method != "POST":
+        return JsonResponse({"erro": "Método inválido"}, status=405)
 
-            day = dados.get("day")
-            time_start = dados.get("time_start")
-            time_end = dados.get("time_end")
+    try:
+        dados = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"erro": "JSON inválido"}, status=400)
 
-            occupant = dados.get("occupant")
-            print(occupant)
+    day_str = dados.get("day")
+    time_start_str = dados.get("time_start")
+    time_end_str = dados.get("time_end")
+    occupant_id = dados.get("occupant")
+
+    if not day_str:
+        return JsonResponse({"erro": "O campo 'day' é obrigatório"}, status=400)
+
+    # Converte day para date
+    try:
+        day = datetime.strptime(day_str, "%Y-%m-%d").date()
+    except ValueError:
+        return JsonResponse({"erro": "Formato de 'day' inválido, use YYYY-MM-DD"}, status=400)
+
+    # Se time_start e time_end estiverem presentes, cria novo Occupancy
+    message = ''
+    success = True
+    if time_start_str and time_end_str:
+        try:
+            time_start = datetime.strptime(time_start_str, "%H:%M").time()
+            time_end = datetime.strptime(time_end_str, "%H:%M").time()
+        except ValueError:
+            return JsonResponse({"erro": "Formato de horário inválido, use HH:MM"}, status=400)
+
+        # Busca occupant se informado
+        occupant_obj = None
+        if occupant_id:
             try:
-                # PRECISA AJEITAR A LOGICA
-                # DATAS QUE OCORREM EM HORARIOS JA MARCADOS TA RETORNANDO ERRO NO FRONTEND
-                if day and time_start and time_end:
-                    conflict_exists = Occupancy.objects.filter(
-                    room=idRoom,
-                    day=day
-                    ).filter(
-                        Q(time_start__lte=time_end) & Q(time_end__gte=time_start)
-                    ).exists()
+                occupant_obj = Occupant.objects.get(pk=occupant_id)
+            except Occupant.DoesNotExist:
+                return JsonResponse({"erro": "O occupant informado não existe"}, status=400)
 
-                    if conflict_exists:
-                        return JsonResponse({"erro": "Já existe dia e horário nesse banco"}, status=400)
-                    else:
-                        occupantRoom = get_object_or_404(Occupant,pk=occupant)
-                        occupancy = Occupancy.objects.create(
-                            room_id = idRoom,
-                            occupant = occupantRoom,
-                            day = day,
-                            time_start = time_start,
-                            time_end = time_end,
-                            status = True
-                        )
+        # Verifica conflito de horário
+        conflict_exists = Occupancy.objects.filter(
+            room=idRoom,
+            day=day
+        ).filter(
+            Q(time_start__lt=time_end) & Q(time_end__gt=time_start)
+        ).exists()
 
-                        if occupancy.pk:
-                            print("Criado com sucesso!")
-                        else:
-                            print("Erro ao criar")
+        if conflict_exists:
+            success = False
+            message = 'Ação Cancelada! Horário cadastro em conflito com um já existente'
+            # return JsonResponse({"erro": "Já existe um horário nesse dia"}, status=400)
+        else:
+        # Cria o Occupancy
+            success = True
+            message = 'Ocupância criada'
+            occupancy = Occupancy.objects.create(
+                room_id=idRoom,
+                occupant=occupant_obj,
+                day=day,
+                time_start=time_start,
+                time_end=time_end,
+                status=True
+            )
+            print(f"Occupancy criado: {occupancy.id}")
 
-            except json.JSONDecodeError:
-                return JsonResponse({"erro": "JSON inválido"}, status=400)
-            
-            if day:
-                occupancys= Occupancy.objects.filter(room=idRoom,day=day,status=True)
-                occupancys = [
-                    {
-                        'id': occupancy.id,
-                        'occupant': occupancy.occupant.firstName if occupancy.occupant else None,
-                        'time_start': occupancy.time_start.strftime("%H:%M") if occupancy.time_start else None,
-                        'time_end': occupancy.time_end.strftime("%H:%M") if occupancy.time_end else None,
-                    }
-                    for occupancy in occupancys
-                ]
-                return JsonResponse(occupancys,safe=False)
+    # Retorna todos os Occupancy do dia
+    occupancys_qs = Occupancy.objects.filter(room=idRoom, day=day).order_by("time_start")
+    # occupancys_qs = Occupancy.objects.filter()
+    occupancys = [
+        {
+            "id": o.id,
+            "occupant": o.occupant.firstName if o.occupant else None,
+            "time_start": o.time_start.strftime("%H:%M") if o.time_start else None,
+            "time_end": o.time_end.strftime("%H:%M") if o.time_end else None,
+        }
+        for o in occupancys_qs
+    ]
+
+    print(f"Occupancies retornados para room {idRoom} no dia {day}: {len(occupancys)}")
+    return JsonResponse(
+        {
+            "message":message,
+            "success":success,
+            "data":occupancys,
+
+        }
+    )
 
 def occupancy_update(request,idOccupancy):
     occupancy = get_object_or_404(Occupancy, pk=idOccupancy)
@@ -290,7 +425,6 @@ class RoomSearchView(LoginRequiredMixin, View):
         time_end_query = request.GET.get("time_end")
     
         rooms = Room.objects.all()
-
         # Filtros
 
         if name_query:

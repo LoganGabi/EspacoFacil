@@ -1,21 +1,46 @@
+// Variável global para armazenar a data selecionada
 let dataFormatada;
-const room = document.getElementById("container")
+
+// Seletores de elementos do DOM
+const room = document.getElementById("container");
 const idRoom = room.dataset.idroom;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
 const time_start = document.getElementById("time_start");
 const time_end = document.getElementById("time_end");
-
-const occupant = document.querySelector('select[name="occupants"]');
-
 const occupantRoom = document.getElementById('occupantRoom');
-let scheduleList = document.getElementById("schedule-list");
 
-function createTime(list,result){
-    let div = document.createElement("div")
-          
+// Seletores para o Modal
+const modalOverlay = document.getElementById('schedule-modal');
+const modalDateTitle = document.getElementById('modal-date-title');
+const closeButton = document.querySelector('.close-button');
+
+// Função para abrir o modal
+function openModal() {
+    modalOverlay.style.display = 'flex';
+}
+
+// Função para fechar o modal
+function closeModal() {
+    modalOverlay.style.display = 'none';
+}
+
+// Event Listeners para fechar o modal
+closeButton.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (event) => {
+    // Fecha o modal apenas se o clique for no fundo (overlay)
+    if (event.target === modalOverlay) {
+        closeModal();
+    }
+});
+console.log("iiiiiiiiiii");
+// Função que cria a lista de horários agendados (semelhante à sua original)
+function createTime(list, result) {
+    let div = document.createElement("div");
+    div.style.marginBottom = "10px"; // Adiciona um espaçamento
+
     let idOccupant = document.createElement("input");
-    idOccupant.type ="hidden";
+    idOccupant.type = "hidden";
     idOccupant.value = result.id;
 
     let new_time_start = document.createElement("input");
@@ -30,10 +55,11 @@ function createTime(list,result){
 
     let new_occupant = document.createElement("input");
     new_occupant.type = 'text';
-    new_occupant.value = result.occupant;
-  
+    new_occupant.value = result.occupant || "Desocupado"; // Operador || para simplificar
+    new_occupant.readOnly = true;
+
     if(result.occupant == null){
-      new_occupant.value = "Nenhum Ocupante"
+      new_occupant.value = "Desocupado"
     }
     new_occupant.readOnly = true;
 
@@ -71,6 +97,7 @@ function createTime(list,result){
       event.preventDefault();
       removeTime(event.target,dataFormatada);
     }
+    // Lembre-se que as funções removeTime e edit precisam estar aqui também.
 
     list.appendChild(div);
     div.appendChild(idOccupant);
@@ -82,108 +109,138 @@ function createTime(list,result){
     div.appendChild(form);
 }
 
-function removeTime(button,dataFormatada){
-  fetch(`/OccupancyDelete/${button.value}/`,{
-    method:"POST",
-    headers:{
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body:JSON.stringify({
-      day: dataFormatada
-    })
-  })
-  .then(response=>response.json())
-  .then(results => {
-        let list = document.getElementById("list");
-        scheduleList.removeChild(list);
-        let new_div = document.createElement("div")
-        list = scheduleList.appendChild(new_div);
-        list.id="list";
-        
-        results.forEach(result=>{
-
-          // CRIAÇÃO DOS INPUTS E BOTÕES DE OCUPÂNCIA
-          createTime(list,result);
-
-        })
-    })
+// Função para atualizar a lista de horários no modal
+function updateScheduleList(results) {
+    console.log(results,'talvz')
+    const listContainer = document.getElementById("list");
+    // Limpa a lista anterior
+    listContainer.innerHTML = '';
+    
+    if (results.length > 0) {
+        results.forEach(result => {
+            createTime(listContainer, result);
+        });
+    } else {
+        listContainer.textContent = "Nenhum horário agendado para esta data.";
+    }
 }
 
-flatpickr("#calendar", {
-    inline: true,
-    mode: "single", // Faz o calendário sempre visível
-    enableTime: false, // Se quiser selecionar horário também
-    dateFormat: "Y-m-d",     // formato da data
-    locale: "pt" ,
-    onChange: function(selectedDates, dateStr, instance) {
-      console.log("Datas selecionadas:", selectedDates);
-      
-      // Pega a última data clicada (como objeto Date)
-      let ultimaData = selectedDates[selectedDates.length - 1];
-  
-      // Se quiser formatar como string:
-      dataFormatada = ultimaData.toISOString().split("T")[0];
-      fetch(`/OccupancyCreate/${idRoom}/`,{
-        method:"POST",
-        headers:{
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
-        },
-        body:JSON.stringify({
-          day : dataFormatada
-        })
-      })
-      .then(response => response.json())
-      .then(results => {
-          let list = document.getElementById("list");
-          scheduleList.removeChild(list);
-          
-          let new_div = document.createElement("div")
-          list = scheduleList.appendChild(new_div);
-          list.id="list";
-          
-          results.forEach(result=>{
-            // CRIAÇÃO DOS INPUTS E BOTÕES DE OCUPÂNCIA
-            createTime(list,result);
-          })
-      })
-      
-      }  
-  });
+function removeTime(button) {
+    // Adiciona uma confirmação para o usuário
+    if (!confirm("Tem certeza que deseja deletar este horário?")) {
+        return; 
+    }
 
-function addTime(){
-    console.log(occupantRoom.value);
-    fetch(`/OccupancyCreate/${idRoom}/`,{
-      method:"POST",
-      headers:{
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      body:JSON.stringify({
-        day : dataFormatada,
-        time_start : time_start.value,
-        time_end : time_end.value,
-        occupant : occupantRoom.value
-      })
+    fetch(`/OccupancyDelete/${button.value}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({
+            day: dataFormatada // Envia o dia para o backend saber qual lista retornar
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            alert("Ocorreu um erro ao deletar o horário.");
+            throw new Error('Erro na resposta do servidor');
+        }
+        return response.json();
+    })
+    .then(results => {
+        // A CORREÇÃO ESTÁ AQUI:
+        // Simplesmente chame a função que já sabe como atualizar a lista.
+        // Ela vai limpar a lista antiga e recriar com os novos dados.
+        if(results.success){
+             updateScheduleList(results.data);
+        }
+        else{
+            alert(`${results.message}`)
+        }
+       
+    })
+    .catch(error => console.error('Erro ao deletar:', error));
+}
+
+// Configuração do Flatpickr
+flatpickr("#calendar", {
+    inline: true, // Mantém o calendário sempre visível na página
+    dateFormat: "Y-m-d",
+    locale: "pt",
+    onChange: function(selectedDates, dateStr, instance) {
+        // 1. Guarda a data selecionada
+        dataFormatada = dateStr;
+
+        // 2. Atualiza o título do modal
+        const friendlyDate = new Date(selectedDates[0]).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        modalDateTitle.textContent = `Agendamentos para ${friendlyDate}`;
+        
+        // 3. Busca os agendamentos existentes para essa data
+        fetch(`/OccupancyCreate/${idRoom}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({
+                day: dataFormatada
+            })
+        })
+        .then(response => response.json())
+        .then(results => {
+            // 4. Preenche a lista de horários no modal
+            console.log('Data: ',results.data);
+            console.log(results);   
+            if(results.success){
+                updateScheduleList(results.data)
+            }
+            else{
+                alert(results.message)
+            }
+            // updateScheduleList(results);
+            // 5. Abre o modal
+            openModal();
+        });
+    }
+});
+
+// Função para adicionar um novo horário (chamada pelo botão no modal)
+function addTime() {
+    // Verifica se os campos de tempo foram preenchidos
+    if (!time_start.value || !time_end.value) {
+        alert("Por favor, preencha o horário inicial e final.");
+        return;
+    }
+
+    fetch(`/OccupancyCreate/${idRoom}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({
+            day: dataFormatada,
+            time_start: time_start.value,
+            time_end: time_end.value,
+            occupant: occupantRoom.value
+        })
     })
     .then(response => response.json())
     .then(results => {
-        let list = document.getElementById("list");
-        scheduleList.removeChild(list);
-        let new_div = document.createElement("div")
-        list = scheduleList.appendChild(new_div);
-        list.id="list";
-        
-        results.forEach(result=>{
-
-          // CRIAÇÃO DOS INPUTS E BOTÕES DE OCUPÂNCIA
-          createTime(list,result);
-
-        })
-    })
+        // Atualiza a lista de horários no modal com os novos dados
+        // updateScheduleList(results);
+            if(results.success){
+                updateScheduleList(results.data)
+            }
+            else{
+                alert(results.message)
+            }
+        // Limpa os campos de input de tempo
+        time_start.value = '';
+        time_end.value = '';
+    });
 }
-
 function edit(edit_button){
   const actionUrl = edit_button.dataset.action;
 
