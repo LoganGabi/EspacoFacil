@@ -27,13 +27,13 @@
 
 /* O conteúdo do popup */
 .modal-content {
-    max-height: 60vh;
+    max-height: 70vh;
     overflow-y: auto;
     background-color: #fff;
     padding: 25px;
     border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
+    width: 60vw;
+    left: 8vw;
     position: relative;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
@@ -54,11 +54,15 @@
 }
 
 /* Organização do formulário dentro do modal */
-.add-time-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
+.td-novo-horario {
+    padding: 15px;
+}
+.adicionar-horario {
+    width: 100%;
+    margin: 0px;
+}
+.btn-edit-form {
+    margin: 0px;
 }
 
 #schedule-list h4 {

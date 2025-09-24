@@ -39,24 +39,42 @@ function createTime(list, result) {
     let div = document.createElement("div");
     div.style.marginBottom = "10px"; // Adiciona um espaçamento
 
+    let tr = document.createElement("tr");
+
+    let td1 = document.createElement("td");
+    td1.classList.add("tds");
+    let td2 = document.createElement("td");
+    td2.classList.add("tds");
+    let td3 = document.createElement("td");
+    td3.classList.add("tds");
+    let td4 = document.createElement("td");
+    td4.classList.add("tds");
+    let div_td4 = document.createElement("div");
+    div_td4.classList.add("row");
+    div_td4.classList.add("justify-content-start");
+    let i_edit = document.createElement("i");
+    i_edit.className = "fa-regular fa-pen-to-square"; // Classe do ícone de lápis do Bootstrap Icons
+    let i_delete = document.createElement("i");
+    i_delete.className = "fa-solid fa-trash"; // Classe do ícone de lixeira do Bootstrap Icons
+
     let idOccupant = document.createElement("input");
     idOccupant.type = "hidden";
     idOccupant.value = result.id;
 
-    let new_time_start = document.createElement("input");
-    new_time_start.type = "time";
-    new_time_start.value = result.time_start;
+    let new_occupant = document.createElement("p");
+    new_occupant.textContent = result.occupant || "Desocupado"; // Operador || para simplificar
+    new_occupant.classList.add("td-novo-horario");
+    new_occupant.readOnly = true;
+
+    let new_time_start = document.createElement("p");
+    new_time_start.textContent = result.time_start;
+    new_time_start.classList.add("td-novo-horario");
     new_time_start.readOnly = true;
 
-    let new_time_end = document.createElement("input");
-    new_time_end.type = "time";
-    new_time_end.value = result.time_end;
+    let new_time_end = document.createElement("p");
+    new_time_end.textContent = result.time_end;
+    new_time_end.classList.add("td-novo-horario");
     new_time_end.readOnly = true;
-
-    let new_occupant = document.createElement("input");
-    new_occupant.type = 'text';
-    new_occupant.value = result.occupant || "Desocupado"; // Operador || para simplificar
-    new_occupant.readOnly = true;
 
     if(result.occupant == null){
       new_occupant.value = "Desocupado"
@@ -74,9 +92,14 @@ function createTime(list, result) {
     form.appendChild(csrf);
 
     let edit_button = document.createElement("button");
+    let col_edit = document.createElement("div");
+    col_edit.className = "col-auto";
     edit_button.id = `edit-button-${result.id}`;
     edit_button.textContent = "Editar Horário";
     edit_button.value = result.id;
+    edit_button.className = "btn btn-primary btn-edit-form";
+
+    edit_button.appendChild(i_edit);
     
     edit_button.onclick  = () => edit(edit_button);
 
@@ -87,10 +110,14 @@ function createTime(list, result) {
     // edit_button.dataset.action = `OccupancyUpdate/${result.id}`;
 
     let delete_button = document.createElement("button");
+    let col_delete = document.createElement("div");
+    col_delete.className = "col-auto";
     delete_button.id = `delete-button-${result.id}`;
     delete_button.textContent = "Deletar Horário";
+    delete_button.className = "btn btn-danger btn-edit-form";
     delete_button.value = result.id;
 
+    delete_button.appendChild(i_delete);
     form.appendChild(delete_button);
 
     delete_button.onclick = (event)=>{
@@ -98,15 +125,25 @@ function createTime(list, result) {
       removeTime(event.target,dataFormatada);
     }
     // Lembre-se que as funções removeTime e edit precisam estar aqui também.
+    list.appendChild(tr); 
 
-    list.appendChild(div);
-    div.appendChild(idOccupant);
-    div.appendChild(new_time_start);
-    div.appendChild(new_time_end);
-    div.appendChild(new_occupant);
+    tr.appendChild(idOccupant);
+    
+    tr.appendChild(td1);
+    td1.appendChild(new_occupant);
 
-    div.appendChild(edit_button);
-    div.appendChild(form);
+    tr.appendChild(td2);
+    td2.appendChild(new_time_start);
+
+    tr.appendChild(td3);
+    td3.appendChild(new_time_end);
+
+    tr.appendChild(td4);
+        td4.appendChild(div_td4);
+            div_td4.appendChild(col_edit);
+                col_edit.appendChild(edit_button);
+            div_td4.appendChild(col_delete);
+                col_delete.appendChild(delete_button);
 }
 
 // Função para atualizar a lista de horários no modal
