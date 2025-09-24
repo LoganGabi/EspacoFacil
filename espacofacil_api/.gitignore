@@ -10,15 +10,3 @@ __pycache__/
 espacofacil.sqlite
 
 staticfiles/*
-# ADICIONE OS ARQUIVOS QUE NÃO DESEJA IGNORAR
-!staticfiles/css/base.css
-!staticfiles/css/calendar.css
-!staticfiles/css/login.css
-!staticfiles/css/menu.css
-!staticfiles/css/reset_css.css
-!staticfiles/css/table.css
-
-!staticfiles/images
-
-!staticfiles/js/addItem.js
-!staticfiles/js/calendar.js
