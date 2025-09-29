@@ -55,8 +55,8 @@
               Nenhum equipamento
             {% endif %}
           {% endwith %}
-          <button class="calendar-button">
-            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar</a>
+          <button class="btn btn-success btn-sm">
+            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar  <i class="fa-regular fa-calendar-plus"></i></a>
           </button>
         </li>
       {% empty %}
