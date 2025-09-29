@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 import json
 from datetime import time, datetime
-from app.models import Occupancy, Occupant, Room, RoomTimeSlot, User, Equipment, RoomEquipment
+from app.models import Occupancy, Room, RoomTimeSlot, User, Equipment, RoomEquipment
 from .forms import EquipmentForm, OccupancyForm, RoomEquipmentForm, RoomForm, RoomTimeSlotForm, RoomTimeslotFormSet, UserForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -282,7 +282,6 @@ class EquipmentDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def occupancy_view(request,idRoom):
     users = User.objects.filter(room=idRoom)
-    occupants = Occupant.objects.all()
     nameRoom = Room.objects.get(pk=idRoom).nameRoom
     
     auto_create_schedules(request)
@@ -290,14 +289,13 @@ def occupancy_view(request,idRoom):
         'idRoom':idRoom,
         'nameRoom':nameRoom,
         'users':users,
-        'occupants':occupants
         }
     )
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db.models import Q
-from .models import Occupancy, Occupant
+from .models import Occupancy
 import json
 
 @login_required
@@ -313,7 +311,6 @@ def occupancy_create(request, idRoom):
     day_str = dados.get("day")
     time_start_str = dados.get("time_start")
     time_end_str = dados.get("time_end")
-    occupant_id = dados.get("occupant")
 
     if not day_str:
         return JsonResponse({"erro": "O campo 'day' é obrigatório"}, status=400)
@@ -334,14 +331,6 @@ def occupancy_create(request, idRoom):
         except ValueError:
             return JsonResponse({"erro": "Formato de horário inválido, use HH:MM"}, status=400)
 
-        # Busca occupant se informado
-        occupant_obj = None
-        if occupant_id:
-            try:
-                occupant_obj = Occupant.objects.get(pk=occupant_id)
-            except Occupant.DoesNotExist:
-                return JsonResponse({"erro": "O occupant informado não existe"}, status=400)
-
         # Verifica conflito de horário
         conflict_exists = Occupancy.objects.filter(
             room=idRoom,
@@ -360,7 +349,7 @@ def occupancy_create(request, idRoom):
             message = 'Ocupância criada'
             occupancy = Occupancy.objects.create(
                 room_id=idRoom,
-                occupant=occupant_obj,
+                occupant=dados.get("occupantRoom"),
                 day=day,
                 time_start=time_start,
                 time_end=time_end,
@@ -374,7 +363,7 @@ def occupancy_create(request, idRoom):
     occupancys = [
         {
             "id": o.id,
-            "occupant": o.occupant.firstName if o.occupant else None,
+            "occupant": o.occupant if o.occupant else None,
             "time_start": o.time_start.strftime("%H:%M") if o.time_start else None,
             "time_end": o.time_end.strftime("%H:%M") if o.time_end else None,
         }
@@ -393,7 +382,8 @@ def occupancy_create(request, idRoom):
 
 def occupancy_update(request,idOccupancy):
     occupancy = get_object_or_404(Occupancy, pk=idOccupancy)
-
+    print('DIA DA OCUPANCIA: ')
+    print(occupancy.day)
     if request.method == "POST":
         form = OccupancyForm(request.POST, instance=occupancy)
         if form.is_valid():

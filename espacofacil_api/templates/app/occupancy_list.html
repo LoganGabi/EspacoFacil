@@ -35,13 +35,14 @@
             <tbody>
                 <tr>
                     <td class="td-novo-horario">
-                        <select name="occupantRoom" id="occupantRoom" class="form-control" required>
+                        <input type="text" name="occupantRoom" id="occupantRoom" class="form-control">
+                        <!-- <select name="occupantRoom" id="occupantRoom" class="form-control" required>
                         <option value="" disabled selected>-- Selecione um ocupante --</option>   
                             {% for occupant in occupants %}
                                 <option value="{{ occupant.id }}">{{ occupant.firstName }} {{ occupant.lastName }}</option>
                             {% endfor %}
                                
-                        </select>
+                        </select> -->
                     </td>
                     <td class="td-novo-horario">
                         <input class="form-control" type="time" name="time_start" id="time_start">
