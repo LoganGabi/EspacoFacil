@@ -1,3 +1,5 @@
+# View para redefinir apenas a senha de um usuário
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (ListView, CreateView, 
                                   UpdateView, DeleteView,
@@ -255,7 +257,22 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserForm
     success_url = reverse_lazy("user_list")
 
+class UserPasswordResetView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        return render(request, "app/user_password_reset_form.html", {"user": user})
 
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        new_password = request.POST.get("new_password")
+        if new_password:
+            user.password = make_password(new_password)
+            user.save()
+            messages.success(request, "Senha redefinida com sucesso!")
+            return redirect("user_list")
+        messages.error(request, "Informe a nova senha.")
+        return render(request, "app/user_password_reset_form.html", {"user": user})
+    
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy("user_list")

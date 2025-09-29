@@ -30,11 +30,12 @@
           <button class="btn btn-outline-primary" onclick="window.location.href='{% url 'user_update' pk=user.pk %}'">
             Editar            
           </button>
-          
+          <button class="btn btn-outline-warning" onclick="window.location.href='{% url 'user_password_reset' pk=user.pk %}'">
+            Redefinir Senha
+          </button>
           <button class="btn btn-outline-danger" onclick="window.location.href='{% url 'user_delete' pk=user.pk %}'">
             Excluir
           </button>
-         
         </td>
       </tr>
       {% endfor %}

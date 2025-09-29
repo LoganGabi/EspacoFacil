@@ -24,6 +24,10 @@ class UserForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control phone-mask'}),
             'email': forms.EmailInput(attrs={'class': 'form-control email-mask'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields.pop('password')
 
 
 

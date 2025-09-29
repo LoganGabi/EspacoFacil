@@ -8,7 +8,7 @@ from django.views.generic import RedirectView
 
 from app.views import (
     RoomListView, room_create, room_update,RoomDeleteView,RoomDetailView,
-    UserListView, UserCreateView, UserUpdateView, UserDeleteView,
+    UserListView, UserCreateView, UserUpdateView, UserDeleteView, UserPasswordResetView,
     EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView,
     RoomSearchView)      
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('userCreate/', UserCreateView.as_view(), name="user_create"),
     path('updateUser/<int:pk>/', UserUpdateView.as_view(), name="user_update"),
     path('deleteUser/<int:pk>/', UserDeleteView.as_view(), name="user_delete"),
+    path('userPasswordReset/<int:pk>/', UserPasswordResetView.as_view(), name="user_password_reset"),
     path('equipmentList/', EquipmentListView.as_view(), name="equipment_list"),
     path('equipmentCreate/', EquipmentCreateView.as_view(),name="equipment_create"),
     path('updateEquipmnet/<int:pk>/',EquipmentUpdateView.as_view(),name="equipment_update"),
