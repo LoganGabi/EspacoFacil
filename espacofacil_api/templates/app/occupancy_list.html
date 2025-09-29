@@ -19,37 +19,68 @@
         <span class="close-button">&times;</span>
         <h3 id="modal-date-title" class="h3">Agendar Horário</h3>
         
-        <div class="add-time-form">
-            <div class="horario">
-                <label for="time_start">Tempo Inicial:</label>
-                <input type="time" name="time_start" id="time_start">
-            </div>
-    
-            <div class="horario">
-                <label for="time_end">Tempo Final:</label>
-                <input type="time" name="time_end" id="time_end">
-            </div>
-
-            <div>
-                <label for="occupantRoom">Ocupante:</label>
-                <select name="occupantRoom" id="occupantRoom" required>
-                <option value="" disabled selected>-- Selecione um ocupante --</option>   
-                    {% for occupant in occupants %}
-                        <option value="{{ occupant.id }}">{{ occupant.firstName }} {{ occupant.lastName }}</option>
-                    {% endfor %}
-                       
-                </select>
-            </div>
+        <table >
+            <thead>
+                <tr>
+                    <td colspan="3">
+                        <h4 class="h4" style="margin-left: 15px;">Novo Horário</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Ocupante</th>
+                    <th>Hora Inicial</th>
+                    <th>Hora Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="td-novo-horario">
+                        <input type="text" name="occupantRoom" id="occupantRoom" class="form-control">
+                        <!-- <select name="occupantRoom" id="occupantRoom" class="form-control" required>
+                        <option value="" disabled selected>-- Selecione um ocupante --</option>   
+                            {% for occupant in occupants %}
+                                <option value="{{ occupant.id }}">{{ occupant.firstName }} {{ occupant.lastName }}</option>
+                            {% endfor %}
+                               
+                        </select> -->
+                    </td>
+                    <td class="td-novo-horario">
+                        <input class="form-control" type="time" name="time_start" id="time_start">
+                    </td>
             
-            <button type="button" onclick="addTime()">+ Adicionar Horário</button>
-        </div>
+                    <td class="td-novo-horario">
+                        <input class="form-control" type="time" name="time_end" id="time_end">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button type="button" onclick="addTime()" class="btn btn-success adicionar-horario">+ Adicionar Horário</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         
         <hr>
 
         <div id="schedule-list">
-            <h3 class="h3">Horários Agendados</h3>
-            <div id="list">
-                </div>
+            <table>
+                <thead>
+                    <tr>
+                        <td colspan="4">
+                            <h4 class="h4" style="margin-left: 15px;">Horarios agendados</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Ocupante</th>
+                        <th>Hora Inicial</th>
+                        <th>Hora Final</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="list">
+                    <!-- Os horários agendados serão inseridos aqui -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

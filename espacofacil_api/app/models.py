@@ -22,18 +22,11 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
-    
-class UserType(models.Model):
-    type = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.type
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
-    user_type = models.ForeignKey('UserType', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -90,30 +83,11 @@ class RoomEquipment(models.Model):
     def __str__(self):
         return self.equipment.nameEquipment
 
-
-class Occupant(models.Model):
-    firstName = models.CharField(verbose_name='firstName',max_length=100)
-    lastName = models.CharField(verbose_name='lastName',max_length=200)
-    cpf = models.CharField(
-        verbose_name='cpf',
-        max_length=11,
-        validators=[MinLengthValidator(11)],
-        help_text="Digite Exatamente 11 números"
-    )
-    email = models.EmailField(verbose_name='email')
-    phone = models.CharField(
-        verbose_name='phone',
-        max_length=11,
-        validators=[MinLengthValidator(11)],
-        help_text='Digite exatamente 11 Números'
-        )
-    def __str__(self):
-        return self.firstName
     
 
 class Occupancy(models.Model):
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
-    occupant = models.ForeignKey(Occupant,on_delete=models.CASCADE,null=True,blank=True)
+    occupant = models.CharField(max_length=100, verbose_name='Detalhes do Ocupante', null=True, blank=True)
     day = models.DateField(null=False,blank=True)
     time_start = models.TimeField(null=False, blank=False)
     time_end = models.TimeField(null=False, blank=False)

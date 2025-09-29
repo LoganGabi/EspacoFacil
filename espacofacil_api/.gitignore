@@ -1,7 +1,12 @@
 # .gitignore corrigido
 
 venv/
+.venv/
+./venv/
+
 .env
 __pycache__/
 **/__pycache__/
 espacofacil.sqlite
+
+staticfiles/*

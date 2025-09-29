@@ -28,8 +28,14 @@
         <input type="time" class="form-control" id="time_end" name="time_end" value="{{ request.GET.time_end}}">
       </div>
       <div class="col-12">
-        <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <p style="color: gray;">Para pesquisar todos, clique em Pesquisar com todos os campos vazios.</p>
+        <br>
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary">Pesquisar <i class="fa-solid fa-magnifying-glass"></i></button>
+          <button type="button" class="btn btn-secondary" onclick="limparCampos()">Limpar campos de busca</button>
+        </div>
       </div>
+
     </form>
 </div>
 <div>
@@ -49,8 +55,8 @@
               Nenhum equipamento
             {% endif %}
           {% endwith %}
-          <button class="calendar-button">
-            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar</a>
+          <button class="btn btn-success btn-sm">
+            <a href={% url "occupancy_list" idRoom=room.pk %}>Agendar  <i class="fa-regular fa-calendar-plus"></i></a>
           </button>
         </li>
       {% empty %}
@@ -59,5 +65,11 @@
     </ul>
   {% endif %}
 </div>
+
+<script>
+function limparCampos() {
+  document.querySelector('form').reset();
+}
+</script>
 {% endblock content %}
 

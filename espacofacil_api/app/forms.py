@@ -11,21 +11,23 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['name', 'password', 'phone', 'email', 'user_type']
+        fields = ['name', 'password', 'phone', 'email']
         labels = {
             'name': 'Nome',
             'password': 'Senha',
             'phone': 'Telefone',
             'email': 'Email',
-            'user_type': 'Tipo de Usuário',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control password-field'}),
             'phone': forms.TextInput(attrs={'class': 'form-control phone-mask'}),
             'email': forms.EmailInput(attrs={'class': 'form-control email-mask'}),
-            'user_type': forms.Select(attrs={'class': 'form-control form-select'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields.pop('password')
 
 
 
@@ -41,14 +43,12 @@ class OccupancyForm(forms.ModelForm):
             'status': 'Ativo',
         }
         widgets = {
-            'day': forms.DateInput(attrs={'type': 'date'}),
+            'day': forms.TextInput(attrs={'type': 'date'}),
             'time_start': forms.TimeInput(attrs={'type': 'time'}),
             'time_end': forms.TimeInput(attrs={'type': 'time'}),
-            'occupant': forms.Select(attrs={'class': 'form-control form-select'}),
+            'occupant': forms.TextInput(attrs={'class': 'form-control form-input'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-
-
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
