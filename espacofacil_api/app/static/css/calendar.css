@@ -88,6 +88,27 @@
     width: 100% !important;
 }
 
+.flatpickr-day.has-schedule {
+    position: relative;
+    font-weight: bold;
+}
+
+.flatpickr-day.has-schedule::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.busy-1::after { background-color: #7DF9FF; } /* Azul claro (Frio) */
+.busy-2::after { background-color: #FFD700; } /* Amarelo */
+.busy-3::after { background-color: #FFA500; } /* Laranja */
+.busy-4::after { background-color: #FF4500; } /* Vermelho alaranjado (Quente) */
+
 .dayContainer{
     width: 100% !important;
     height: 70vh;

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from app.views import occupancy_create, occupancy_delete, occupancy_update, occupancy_view, login_view
+from app.views import occupancy_create,occupancy_create_multiple, occupancy_delete, occupancy_update, occupancy_view, login_view
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 
@@ -10,7 +10,7 @@ from app.views import (
     RoomListView, room_create, room_update,RoomDeleteView,RoomDetailView,
     UserListView, UserCreateView, UserUpdateView, UserDeleteView, UserPasswordResetView,
     EquipmentListView,EquipmentCreateView,EquipmentUpdateView,EquipmentDeleteView,
-    RoomSearchView)      
+    RoomSearchView,get_scheduled_dates)      
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/accounts/login/', permanent=False)),
@@ -34,8 +34,9 @@ urlpatterns = [
     path('deleteEquipmnet/<int:pk>/',EquipmentDeleteView.as_view(),name="equipment_delete"),
     path('room/<int:pk>/', RoomDetailView.as_view(), name="room_detail"),
     path('OccupancyCreate/<int:idRoom>/',occupancy_create,name="occupancy_create"),
+    path('OccupancyCreateMultiple/<int:idRoom>/', occupancy_create_multiple, name='occupancy_create_multiple'),
     path("OccupancyDelete/<int:idOccupancy>/",occupancy_delete,name="occupancy_delete"),
     path("OccupancyUpdate/<int:idOccupancy>/",occupancy_update,name='occupancy_update'),
     path('occupancys_list/<int:idRoom>',occupancy_view,name="occupancy_list"),
-
+    path('api/scheduled-dates/<int:idRoom>/<int:year>/<int:month>/', get_scheduled_dates, name='get_scheduled_dates'),
 ] 

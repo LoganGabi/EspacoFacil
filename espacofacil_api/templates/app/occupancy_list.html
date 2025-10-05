@@ -36,13 +36,6 @@
                 <tr>
                     <td class="td-novo-horario">
                         <input type="text" name="occupantRoom" id="occupantRoom" class="form-control">
-                        <!-- <select name="occupantRoom" id="occupantRoom" class="form-control" required>
-                        <option value="" disabled selected>-- Selecione um ocupante --</option>   
-                            {% for occupant in occupants %}
-                                <option value="{{ occupant.id }}">{{ occupant.firstName }} {{ occupant.lastName }}</option>
-                            {% endfor %}
-                               
-                        </select> -->
                     </td>
                     <td class="td-novo-horario">
                         <input class="form-control" type="time" name="time_start" id="time_start">
@@ -53,9 +46,70 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
-                        <button type="button" onclick="addTime()" class="btn btn-success adicionar-horario">+ Adicionar Horário</button>
+                    <td colspan="3" class="td-novo-horario">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="recurrent-schedule-checkbox">
+                            <label class="form-check-label" for="recurrent-schedule-checkbox">
+                                Agendamento recorrente
+                            </label>
+                        </div>
                     </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div id="recurrent-schedule-section" style="display: none;">
+            <hr>
+            <h4 class="h4">Detalhes da Recorrência</h4>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="form-label">Repetir nos dias:</label>
+                    <div class="d-flex justify-content-around">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-1" value="0">
+                            <label class="form-check-label" for="weekday-1">Seg</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-2" value="1">
+                            <label class="form-check-label" for="weekday-2">Ter</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-3" value="2">
+                            <label class="form-check-label" for="weekday-3">Qua</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-4" value="3">
+                            <label class="form-check-label" for="weekday-4">Qui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-5" value="4">
+                            <label class="form-check-label" for="weekday-5">Sex</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday" id="weekday-6" value="5">
+                            <label class="form-check-label" for="weekday-6">Sáb</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="weekday-0" id="weekday-0" value="6">
+                            <label class="form-check-label" for="weekday-0">Dom</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label for="recurrent-start-date" class="form-label">Início da Repetição:</label>
+                    <input type="date" class="form-control" id="recurrent-start-date">
+                </div>
+                <div class="col-6">
+                    <label for="recurrent-end-date" class="form-label">Fim da Repetição:</label>
+                    <input type="date" class="form-control" id="recurrent-end-date">
+                </div>
+            </div>
+        </div>
+        <table>
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        <button type="button" id="add-schedule-button" class="btn btn-success adicionar-horario">+ Adicionar Horário</button>                    </td>
                 </tr>
             </tbody>
         </table>
@@ -78,8 +132,7 @@
                     </tr>
                 </thead>
                 <tbody id="list">
-                    <!-- Os horários agendados serão inseridos aqui -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </div>

@@ -8,6 +8,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.db import transaction
+from django.db.models import Count
 from django.db.models import Q
 from django import forms
 from django.forms import inlineformset_factory
@@ -347,32 +348,35 @@ def occupancy_create(request, idRoom):
             time_end = datetime.strptime(time_end_str, "%H:%M").time()
         except ValueError:
             return JsonResponse({"erro": "Formato de horário inválido, use HH:MM"}, status=400)
-
-        # Verifica conflito de horário
-        conflict_exists = Occupancy.objects.filter(
-            room=idRoom,
-            day=day
-        ).filter(
-            Q(time_start__lt=time_end) & Q(time_end__gt=time_start)
-        ).exists()
-
-        if conflict_exists:
+        if time_start >= time_end:
             success = False
-            message = 'Ação Cancelada! Horário cadastro em conflito com um já existente'
-            # return JsonResponse({"erro": "Já existe um horário nesse dia"}, status=400)
+            message = 'Ação Cancelada! O horário de início deve ser anterior ao horário de término.'
         else:
-        # Cria o Occupancy
-            success = True
-            message = 'Ocupância criada'
-            occupancy = Occupancy.objects.create(
-                room_id=idRoom,
-                occupant=dados.get("occupantRoom"),
-                day=day,
-                time_start=time_start,
-                time_end=time_end,
-                status=True
-            )
-            print(f"Occupancy criado: {occupancy.id}")
+            # Verifica conflito de horário
+            conflict_exists = Occupancy.objects.filter(
+                room=idRoom,
+                day=day
+            ).filter(
+                Q(time_start__lt=time_end) & Q(time_end__gt=time_start)
+            ).exists()
+
+            if conflict_exists:
+                success = False
+                message = 'Ação Cancelada! O horário selecionado está em conflito com um agendamento existente.'
+                # return JsonResponse({"erro": "Já existe um horário nesse dia"}, status=400)
+            else:
+            # Cria o Occupancy
+                success = True
+                message = 'Agendamento criado com sucesso!'
+                occupancy = Occupancy.objects.create(
+                    room_id=idRoom,
+                    occupant=dados.get("occupant"),
+                    day=day,
+                    time_start=time_start,
+                    time_end=time_end,
+                    status=True
+                )
+                print(f"Occupancy criado: {occupancy.id}")
 
     # Retorna todos os Occupancy do dia
     occupancys_qs = Occupancy.objects.filter(room=idRoom, day=day).order_by("time_start")
@@ -397,6 +401,73 @@ def occupancy_create(request, idRoom):
         }
     )
 
+@login_required
+def occupancy_create_multiple(request, idRoom):
+    if request.method != "POST":
+        return JsonResponse({"error": "Método inválido"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+
+    # Validação dos dados recebidos
+    try:
+        start_date = datetime.strptime(data.get("repeat_start_date"), "%Y-%m-%d").date()
+        end_date = datetime.strptime(data.get("repeat_end_date"), "%Y-%m-%d").date()
+        time_start = datetime.strptime(data.get("time_start"), "%H:%M").time()
+        time_end = datetime.strptime(data.get("time_end"), "%H:%M").time()
+        # Converte os dias da semana de string para inteiros
+        weekdays = [int(day) for day in data.get("weekdays", [])]
+        occupant_details = data.get("occupant")
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Formato de dados inválido. Verifique datas, horários e dias da semana."}, status=400)
+
+    # Validações de lógica
+    if start_date > end_date:
+        return JsonResponse({"error": "A data de início não pode ser posterior à data de fim."}, status=400)
+    if time_start >= time_end:
+        return JsonResponse({"error": "O horário de início deve ser anterior ao de término."}, status=400)
+    if not weekdays:
+        return JsonResponse({"error": "Selecione pelo menos um dia da semana."}, status=400)
+
+    successful_bookings = []
+    failed_bookings = []
+    
+    current_date = start_date
+    while current_date <= end_date:
+        # weekday() retorna: Segunda=0, Terça=1, ..., Domingo=6
+        if current_date.weekday() in weekdays:
+            # Verifica se já existe um agendamento conflitante neste dia e horário
+            conflict_exists = Occupancy.objects.filter(
+                room_id=idRoom,
+                day=current_date,
+                time_start__lt=time_end,
+                time_end__gt=time_start
+            ).exists()
+
+            if not conflict_exists:
+                Occupancy.objects.create(
+                    room_id=idRoom,
+                    occupant=occupant_details,
+                    day=current_date,
+                    time_start=time_start,
+                    time_end=time_end,
+                    status=True
+                )
+                successful_bookings.append(current_date.strftime("%d/%m/%Y"))
+            else:
+                failed_bookings.append(f"{current_date.strftime('%d/%m/%Y')} (Conflito)")
+        
+        current_date += timedelta(days=1)
+
+    return JsonResponse({
+        "success": True,
+        "message": "Processo de agendamento recorrente finalizado.",
+        "successful_bookings": successful_bookings,
+        "failed_bookings": failed_bookings
+    })
+
 def occupancy_update(request,idOccupancy):
     occupancy = get_object_or_404(Occupancy, pk=idOccupancy)
     print('DIA DA OCUPANCIA: ')
@@ -416,9 +487,44 @@ def occupancy_update(request,idOccupancy):
 def occupancy_delete(request,idOccupancy):
     if request.method == "POST":
         occupancy = get_object_or_404(Occupancy,pk = idOccupancy)
-        id_occupancy = occupancy.room.id
+        id_room = occupancy.room.id
+        day = occupancy.day
         occupancy.delete()
-        return occupancy_create(request,id_occupancy)
+
+        occupancy_qs = Occupancy.objects.filter(room_id=id_room, day=day).order_by("time_start")
+        occupancys = [
+            {
+                "id": o.id,
+                "occupant": o.occupant if o.occupant else None,
+                "time_start": o.time_start.strftime("%H:%M") if o.time_start else None,
+                "time_end": o.time_end.strftime("%H:%M") if o.time_end else None,
+            }
+            for o in occupancy_qs
+        ]
+        return JsonResponse({
+            "message": "Agendamento deletado com sucesso",
+            "success": True,
+            "data": occupancys
+        })
+
+def get_scheduled_dates(request, idRoom, year, month):
+    # Agrupa os agendamentos por dia e conta quantos existem em cada dia
+    counts = Occupancy.objects.filter(
+        room_id=idRoom,
+        day__year=year,
+        day__month=month
+    ).values('day').annotate(
+        count=Count('id')
+    ).values('day', 'count')
+
+    # Transforma o resultado em um dicionário no formato { 'YYYY-MM-DD': count }
+    date_counts = {
+        item['day'].strftime('%Y-%m-%d'): item['count']
+        for item in counts
+    }
+
+    return JsonResponse(date_counts)
+
 # View da pesquisa das salas.
 
 class RoomSearchView(LoginRequiredMixin, View):
